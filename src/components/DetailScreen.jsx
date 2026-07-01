@@ -1,4 +1,6 @@
 import ThreeDView from './ThreeDView'
+import ScenariosCarousel from './ScenariosCarousel'
+import BrochuresGrid from './BrochuresGrid'
 
 export default function DetailScreen({ active, selected, onBack }) {
   return (
@@ -11,6 +13,27 @@ export default function DetailScreen({ active, selected, onBack }) {
     }}>
       {selected === '3D View' && (
         <ThreeDView />
+      )}
+
+      {selected === 'Scenarios' && (
+        <ScenariosCarousel />
+      )}
+
+      {selected === 'Brochures' && (
+        <BrochuresGrid />
+      )}
+
+      {selected === 'Building Storyboard' && (
+        <img
+          src={`${import.meta.env.BASE_URL}images/storyboard.webp`}
+          alt="Building storyboard"
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'contain', objectPosition: 'center',
+            background: '#F0EDE5',
+          }}
+        />
       )}
 
       <button

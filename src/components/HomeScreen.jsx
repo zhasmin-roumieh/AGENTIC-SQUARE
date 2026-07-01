@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 const titleBase = {
   fontFamily: "'BBTorsosPro', sans-serif",
@@ -15,28 +15,19 @@ const titleBase = {
 const names = ['Zhasmin Roumieh', 'Mareike Sophie Steffen', 'Dikshya Pokharel']
 
 export default function HomeScreen({ active, onEnter }) {
-  const containerRef = useRef(null)
-
-  // Auto-focus so keyboard events are captured reliably
-  useEffect(() => {
-    if (active && containerRef.current) containerRef.current.focus()
-  }, [active])
-
-  // Global keyboard fallback
+  // Listens on window (capture phase) so it fires regardless of what
+  // element currently has focus on the page.
   useEffect(() => {
     if (!active) return
     const onKey = (e) => {
       if (e.key === 'Backspace') { e.preventDefault(); onEnter() }
     }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
   }, [active, onEnter])
 
   return (
     <div
-      ref={containerRef}
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Backspace') { e.preventDefault(); onEnter() } }}
       style={{
         position: 'absolute', inset: 0,
         background: '#FFFFFF',
@@ -44,7 +35,6 @@ export default function HomeScreen({ active, onEnter }) {
         pointerEvents: active ? 'all' : 'none',
         transition: 'opacity 0.8s ease',
         overflow: 'hidden',
-        outline: 'none',
       }}
     >
       {/* Scrolling pattern */}

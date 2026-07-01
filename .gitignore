@@ -24,6 +24,7 @@ Thumbs.db
 # small; the site's actual assets live in public/images and public/fonts.
 /02 Brick Playground (1).skp
 /MODEL.glb
+/new model.glb
 /Westhagen File.glb
 /bricks-03.png
 /COLOR 3.png
@@ -35,3 +36,6 @@ Thumbs.db
 /PATTERN.png
 /PATTERN 2 (2).png
 /PATTERN 3.png
+/Storyboard.gif
+/perspectives/
+/brochures/
