@@ -22,7 +22,7 @@ export default function IntroScreen({ active, onExplore }) {
     }}>
       {/* Slide image */}
       <img
-        src={`${import.meta.env.BASE_URL}images/INTROSLIDE.png`}
+        src={`${import.meta.env.BASE_URL}images/INTROSLIDE.webp`}
         alt="Agentic Square intro slide"
         draggable={false}
         style={{

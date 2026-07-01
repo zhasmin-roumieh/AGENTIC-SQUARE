@@ -16,6 +16,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Claude Code local state
+.claude/
+
 # Raw design working files at the project root (not used by the site —
 # the app only reads from public/ and src/). Excluded to keep the repo
 # small; the site's actual assets live in public/images and public/fonts.

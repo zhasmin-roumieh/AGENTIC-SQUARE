@@ -20,26 +20,26 @@ export default function ThreeDView() {
     const scene = new THREE.Scene()
     scene.background = new THREE.Color('#F0EDE5')
 
-    // Strong ambient base
-    scene.add(new THREE.AmbientLight(0xffffff, 2.5))
+    // Strong ambient base — flat, even light with no hard shadows
+    scene.add(new THREE.AmbientLight(0xffffff, 3.5))
 
     // Key light — top right front
-    const key = new THREE.DirectionalLight(0xfff8f0, 2.0)
+    const key = new THREE.DirectionalLight(0xfff8f0, 1.4)
     key.position.set(5, 8, 4)
     scene.add(key)
 
     // Fill light — left side
-    const fillL = new THREE.DirectionalLight(0xddeeff, 1.2)
+    const fillL = new THREE.DirectionalLight(0xddeeff, 0.9)
     fillL.position.set(-6, 4, 2)
     scene.add(fillL)
 
     // Rim / back light
-    const rim = new THREE.DirectionalLight(0xffffff, 0.8)
+    const rim = new THREE.DirectionalLight(0xffffff, 0.6)
     rim.position.set(-2, 6, -6)
     scene.add(rim)
 
     // Soft ground bounce
-    scene.add(new THREE.HemisphereLight(0xffffff, 0xd0e8e4, 1.0))
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xd0e8e4, 1.4))
 
     const camera = new THREE.PerspectiveCamera(42, mount.clientWidth / mount.clientHeight, 0.01, 10000)
     let theta = Math.PI / 4, phi = Math.PI / 3.5, radius = 50
@@ -70,7 +70,13 @@ export default function ThreeDView() {
       model.position.copy(centre.clone().multiplyScalar(-scale))
       const fitted = new THREE.Box3().setFromObject(model)
       fitted.getCenter(target)
-      radius = fitted.getSize(new THREE.Vector3()).length() * 0.8
+
+      // Fit the whole model in view: find the distance needed so the
+      // bounding sphere fits within both the vertical and horizontal FOV.
+      const sphere = fitted.getBoundingSphere(new THREE.Sphere())
+      const vFitDistance = sphere.radius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2))
+      const hFitDistance = vFitDistance / camera.aspect
+      radius = Math.max(vFitDistance, hFitDistance) * 1.15
       updateCamera()
       scene.add(model)
     }, undefined, err => console.error(err))
