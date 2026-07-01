@@ -1,0 +1,229 @@
+/* ── BB Torsos Pro font faces ──
+   Paths are prefixed with /AGENTIC-SQUARE/ to match the GitHub Pages repo
+   name — CSS can't read the Vite base config, so keep this in sync with
+   the `base` value in vite.config.js if the repo is ever renamed. */
+@font-face {
+  font-family: 'BBTorsosPro';
+  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-thin.ttf') format('truetype');
+  font-weight: 100;
+}
+@font-face {
+  font-family: 'BBTorsosPro';
+  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-light.ttf') format('truetype');
+  font-weight: 300;
+}
+@font-face {
+  font-family: 'BBTorsosPro';
+  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'BBTorsosPro';
+  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-medium.ttf') format('truetype');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'BBTorsosPro';
+  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-semibold.ttf') format('truetype');
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'BBTorsosPro';
+  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+/* ── Design tokens ── */
+:root {
+  --white:        #FFFFFF;
+  --black:        #000000;
+  --red:          #C41E3A;
+  --red-light:    #E05040;
+  --red-dark:     #8B1A1A;
+  --yellow:       #D4901A;
+  --yellow-light: #F0B840;
+  --yellow-pale:  #F5EDD5;
+  --teal:         #5B9EA0;
+  --teal-light:   #7BBAB6;
+  --teal-dark:    #3D7A76;
+  --blush:        #ECC8BC;
+  --gray:         #8A8A8A;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'BBTorsosPro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #fff;
+}
+
+/* ── Continuous left-to-right scroll ── */
+@keyframes scrollRight {
+  from { background-position: 0 0; }
+  to   { background-position: 20vw 0; }
+}
+
+/* ── Floating element drift animations ── */
+@keyframes driftRight {
+  0%   { transform: translateX(-380px) translateY(0px); }
+  20%  { transform: translateX(20vw)   translateY(-28px); }
+  40%  { transform: translateX(40vw)   translateY(18px); }
+  60%  { transform: translateX(60vw)   translateY(-22px); }
+  80%  { transform: translateX(80vw)   translateY(14px); }
+  100% { transform: translateX(calc(100vw + 380px)) translateY(0px); }
+}
+
+@keyframes driftLeft {
+  0%   { transform: translateX(calc(100vw + 380px)) translateY(0px); }
+  20%  { transform: translateX(80vw)   translateY(22px); }
+  40%  { transform: translateX(60vw)   translateY(-18px); }
+  60%  { transform: translateX(40vw)   translateY(26px); }
+  80%  { transform: translateX(20vw)   translateY(-12px); }
+  100% { transform: translateX(-380px) translateY(0px); }
+}
+
+.drift-right {
+  animation-name: driftRight;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.drift-left {
+  animation-name: driftLeft;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* ── Glitch effects ── */
+
+/* Red title glitch — fires ~every 2-3 s (5 s cycle) */
+@keyframes glitchRed {
+  0%, 44%, 100% { opacity: 0; clip-path: none; transform: none; }
+  45%  { opacity: 0.95; clip-path: polygon(0 4%,  100% 4%,  100% 33%, 0 33%); transform: translateX(-16px); }
+  46%  { opacity: 0.95; clip-path: polygon(0 52%, 100% 52%, 100% 78%, 0 78%); transform: translateX(14px); }
+  47%  { opacity: 0; }
+  73%  { opacity: 0.8;  clip-path: polygon(0 22%, 100% 22%, 100% 55%, 0 55%); transform: translateX(-12px); }
+  74%  { opacity: 0.8;  clip-path: polygon(0 60%, 100% 60%, 100% 90%, 0 90%); transform: translateX(10px); }
+  75%  { opacity: 0; }
+}
+
+/* Teal title glitch — fires ~every 1.6-2.8 s (4 s cycle) */
+@keyframes glitchTeal {
+  0%, 40%, 100% { opacity: 0; clip-path: none; transform: none; }
+  41%  { opacity: 0.85; clip-path: polygon(0 36%, 100% 36%, 100% 64%, 0 64%); transform: translateX(18px); }
+  42%  { opacity: 0.85; clip-path: polygon(0 8%,  100% 8%,  100% 28%, 0 28%); transform: translateX(-14px); }
+  43%  { opacity: 0; }
+  68%  { opacity: 0.65; clip-path: polygon(0 62%, 100% 62%, 100% 85%, 0 85%); transform: translateX(12px); }
+  69%  { opacity: 0.65; clip-path: polygon(0 18%, 100% 18%, 100% 42%, 0 42%); transform: translateX(-8px); }
+  70%  { opacity: 0; }
+}
+
+/* Full-screen flash (5 s cycle) */
+@keyframes screenFlash {
+  0%, 43%, 100% { opacity: 0; }
+  43.5% { opacity: 0.3; }
+  44%   { opacity: 0; }
+  44.6% { opacity: 0.2; }
+  45%   { opacity: 0; }
+  72%   { opacity: 0.15; }
+  72.5% { opacity: 0; }
+}
+
+/* Scan line (6 s cycle) */
+@keyframes glitchLine {
+  0%, 40%, 100% { opacity: 0; }
+  40.5% { opacity: 1;   top: 23%; transform: translateX(-35px); }
+  41%   { opacity: 0; }
+  41.5% { opacity: 0.8; top: 23%; transform: translateX(20px); }
+  42%   { opacity: 0; }
+  65%   { opacity: 0.9; top: 67%; transform: translateX(28px); }
+  65.5% { opacity: 0; }
+  66%   { opacity: 0.6; top: 67%; transform: translateX(-18px); }
+  66.5% { opacity: 0; }
+}
+
+/* Glitch-in entrance animation */
+@keyframes glitchIn {
+  0%   { opacity: 0; clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); transform: translateX(-20px); }
+  10%  { opacity: 0.9; clip-path: polygon(0 15%, 100% 15%, 100% 45%, 0 45%); transform: translateX(-14px); }
+  14%  { opacity: 0; clip-path: none; }
+  22%  { opacity: 0.95; clip-path: polygon(0 55%, 100% 55%, 100% 85%, 0 85%); transform: translateX(12px); }
+  26%  { opacity: 0.9; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: translateX(-8px); }
+  32%  { opacity: 1; clip-path: none; transform: translateX(5px); }
+  38%  { opacity: 0.85; clip-path: polygon(0 25%, 100% 25%, 100% 70%, 0 70%); transform: translateX(-5px); }
+  44%  { opacity: 1; clip-path: none; transform: translateX(3px); }
+  50%  { opacity: 0.9; clip-path: polygon(0 8%, 100% 8%, 100% 92%, 0 92%); transform: translateX(-3px); }
+  58%  { opacity: 1; clip-path: none; transform: none; }
+  70%  { opacity: 0.95; clip-path: polygon(0 30%, 100% 30%, 100% 68%, 0 68%); transform: translateX(2px); }
+  80%  { opacity: 1; clip-path: none; transform: none; }
+  100% { opacity: 1; clip-path: none; transform: none; }
+}
+
+/* ── Backspace hint pulse ── */
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.9; }
+}
+.hint-pulse {
+  animation: hintPulse 2.6s ease-in-out infinite;
+}
+
+/* ── Device screen lighten + glitch ── */
+@keyframes screenLighten {
+  0%   { opacity: 0;    transform: translateX(0);   }
+  4%   { opacity: 0.95; transform: translateX(0);   }
+  9%   { opacity: 0.95; transform: translateX(-6px);}
+  11%  { opacity: 0.3;  transform: translateX(5px); }
+  13%  { opacity: 0.9;  transform: translateX(0);   }
+  24%  { opacity: 0.88; transform: translateX(-4px);}
+  26%  { opacity: 0.25; transform: translateX(6px); }
+  28%  { opacity: 0.9;  transform: translateX(0);   }
+  42%  { opacity: 0.85; transform: translateX(-3px);}
+  44%  { opacity: 0.15; transform: translateX(4px); }
+  46%  { opacity: 0.8;  transform: translateX(0);   }
+  62%  { opacity: 0.55; }
+  78%  { opacity: 0.25; }
+  92%  { opacity: 0.08; }
+  100% { opacity: 0;    transform: translateX(0);   }
+}
+
+/* ── Typewriter cursor blink ── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.cursor {
+  display: inline-block;
+  width: 3px;
+  margin-left: 4px;
+  animation: blink 0.7s step-start infinite;
+}
+
+/* ── Explore button ── */
+.explore-btn {
+  font-family: 'BBTorsosPro', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: #FFFFFF;
+  color: #000000;
+  border: 2px solid #FFFFFF;
+  padding: 1rem 3.5rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+.explore-btn:hover {
+  background: transparent;
+  color: #FFFFFF;
+  transform: scale(1.05);
+}
