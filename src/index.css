@@ -65,6 +65,28 @@ html, body, #root {
   background: #fff;
 }
 
+/* ── Scroll-snap presentation layout ──
+   The whole site is one tall scrollable page. Each section snaps to fill
+   the screen; a tap on a section's "next" prompt smooth-scrolls to the
+   next one, but free scroll/swipe always works too. */
+.scroll-container {
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.snap-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+}
+
 /* ── Continuous left-to-right scroll ── */
 @keyframes scrollRight {
   from { background-position: 0 0; }
@@ -230,8 +252,106 @@ html, body, #root {
   cursor: pointer;
   transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
 }
-.explore-btn:hover {
+.explore-btn:hover,
+.explore-btn:active {
   background: transparent;
   color: #FFFFFF;
   transform: scale(1.05);
+}
+
+/* ── Brochure thumbnails — full color always (grayscale-on-hover doesn't
+   work on touch), with a light tap-feedback on press instead ── */
+.brochure-thumb-img {
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.brochure-thumb-btn:active .brochure-thumb-img {
+  transform: scale(0.97);
+  filter: brightness(0.92);
+}
+
+/* ── Custom cursor (mouse/trackpad only — untouched on touchscreens) ── */
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+/* ── Film grain overlay — breaks up flat digital white, awwwards-style ── */
+.grain-overlay {
+  position: fixed;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainShift 0.5s steps(4) infinite;
+}
+@keyframes grainShift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-2%, 1%); }
+  50%  { transform: translate(1%, -2%); }
+  75%  { transform: translate(-1%, 2%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Reveal-on-scroll utility — image scale-in + fade, text slide-up ── */
+.reveal-img {
+  transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.1s ease;
+  transform: scale(1.08);
+  opacity: 0;
+}
+.reveal-img.is-in {
+  transform: scale(1);
+  opacity: 1;
+}
+.reveal-up {
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
+  transform: translateY(28px);
+  opacity: 0;
+}
+.reveal-up.is-in {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ── Screensaver crossfade ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Home quick-nav pills — small button-style links on the cover screen ── */
+.nav-pill {
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.nav-pill:hover, .nav-pill:active {
+  background: #a82b39 !important;
+  border-color: #a82b39 !important;
+  color: #fff !important;
+}
+
+/* ── 3D viewer gesture hints ── */
+@keyframes handSlide {
+  0%, 100% { transform: translateX(-8px); }
+  50%       { transform: translateX(8px); }
+}
+.hint-hand { display: inline-block; animation: handSlide 1.5s ease-in-out infinite; }
+
+@keyframes pinchScale {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(0.7); }
+}
+.hint-pinch { display: inline-block; animation: pinchScale 1.5s ease-in-out infinite; }
+
+/* ── Ghost title — huge, pale duplicate sitting behind the real heading ── */
+.ghost-title {
+  position: absolute;
+  white-space: nowrap;
+  font-family: 'BBTorsosPro', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
 }

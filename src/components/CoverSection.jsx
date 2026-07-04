@@ -1,4 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import useInView from '../hooks/useInView'
+import ScrollDownPrompt from './ScrollDownPrompt'
+import SectionIndex from './SectionIndex'
 
 const titleBase = {
   fontFamily: "'BBTorsosPro', sans-serif",
@@ -14,29 +17,31 @@ const titleBase = {
 
 const names = ['Zhasmin Roumieh', 'Mareike Sophie Steffen', 'Dikshya Pokharel']
 
-export default function HomeScreen({ active, onEnter }) {
-  // Listens on window (capture phase) so it fires regardless of what
-  // element currently has focus on the page.
+// Direct jumps to sections a visitor might want without scrolling through
+// everything — indices must match the section order set up in App.jsx.
+const quickLinks = [
+  { label: 'Site Analysis', index: 6 },
+  { label: 'Interactive Chat', index: 8 },
+  { label: 'Explore 3D', index: 9 },
+  { label: 'Storyboard', index: 10 },
+  { label: 'Scenarios', index: 11 },
+  { label: 'Brochures', index: 13 },
+]
+
+export default function CoverSection({ innerRef, onNext, onJump, n }) {
+  const ref = useRef(null)
+  const attachRef = el => { ref.current = el; innerRef?.(el) }
+  const inView = useInView(ref)
+
+  // Bonus desktop shortcut — the tap prompt below is the primary control.
   useEffect(() => {
-    if (!active) return
-    const onKey = (e) => {
-      if (e.key === 'Backspace') { e.preventDefault(); onEnter() }
-    }
+    const onKey = e => { if (e.key === 'Backspace') { e.preventDefault(); onNext() } }
     window.addEventListener('keydown', onKey, true)
     return () => window.removeEventListener('keydown', onKey, true)
-  }, [active, onEnter])
+  }, [onNext])
 
   return (
-    <div
-      style={{
-        position: 'absolute', inset: 0,
-        background: '#FFFFFF',
-        opacity: active ? 1 : 0,
-        pointerEvents: active ? 'all' : 'none',
-        transition: 'opacity 0.8s ease',
-        overflow: 'hidden',
-      }}
-    >
+    <section ref={attachRef} className="snap-section" style={{ background: '#FFFFFF' }}>
       {/* Scrolling pattern */}
       <div style={{
         position: 'absolute', inset: 0,
@@ -103,28 +108,34 @@ export default function HomeScreen({ active, onEnter }) {
         ))}
       </div>
 
-      {/* Click backspace — bottom centre, acts as button too */}
-      <button
-        onClick={onEnter}
-        className="hint-pulse"
-        style={{
-          position: 'absolute',
-          bottom: '3.5rem', left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex', alignItems: 'center', gap: '0.55rem',
-          color: '#8A8A8A',
-          fontFamily: "'BBTorsosPro', sans-serif",
-          fontSize: '0.75rem', fontWeight: 400,
-          letterSpacing: '0.2em', textTransform: 'uppercase',
-          whiteSpace: 'nowrap',
-          zIndex: 10,
-          background: 'none', border: 'none',
-          cursor: 'pointer', padding: 0,
-        }}
-      >
-        <span style={{ fontSize: '1rem' }}>←</span>
-        <span>CLICK BACKSPACE</span>
-      </button>
-    </div>
+      {onJump && (
+        <div style={{
+          position: 'absolute', top: '2rem', right: '2.5rem', zIndex: 10,
+          display: 'flex', justifyContent: 'flex-end', gap: '0.4rem',
+        }}>
+          {quickLinks.map(link => (
+            <button
+              key={link.index}
+              onClick={() => onJump(link.index)}
+              data-cursor-hover
+              className="nav-pill"
+              style={{
+                background: 'none', border: '1px solid rgba(0,0,0,0.25)',
+                borderRadius: '100px', padding: '0.35rem 0.8rem', cursor: 'pointer',
+                fontFamily: "'BBTorsosPro', sans-serif",
+                fontSize: '0.58rem', fontWeight: 600,
+                letterSpacing: '0.06em', textTransform: 'uppercase',
+                color: '#1a1a1a', whiteSpace: 'nowrap',
+              }}
+            >
+              {link.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {n && <SectionIndex n={n} />}
+      <ScrollDownPrompt visible={inView} onClick={onNext} />
+    </section>
   )
 }

@@ -1,25 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import useInView from '../hooks/useInView'
+import SectionIndex from './SectionIndex'
+import ScrollDownPrompt from './ScrollDownPrompt'
 
-export default function IntroScreen({ active, onExplore }) {
+export default function IntroSection({ innerRef, onNext, onBack, n }) {
+  const ref = useRef(null)
+  const attachRef = el => { ref.current = el; innerRef?.(el) }
+  const inView = useInView(ref)
+
   const [visible, setVisible] = useState(false)
   const [showBtn, setShowBtn] = useState(false)
 
   useEffect(() => {
-    if (!active) { setVisible(false); setShowBtn(false); return }
+    if (!inView) return
     const t1 = setTimeout(() => setVisible(true), 80)
     const t2 = setTimeout(() => setShowBtn(true), 2800)
     return () => [t1, t2].forEach(clearTimeout)
-  }, [active])
+  }, [inView])
 
   return (
-    <div style={{
-      position: 'absolute', inset: 0,
-      background: '#fff',
-      opacity: active ? 1 : 0,
-      pointerEvents: active ? 'all' : 'none',
-      transition: 'opacity 0.5s ease',
-      overflow: 'hidden',
-    }}>
+    <section ref={attachRef} className="snap-section" style={{ background: '#fff' }}>
       {/* Slide image */}
       <img
         src={`${import.meta.env.BASE_URL}images/INTROSLIDE.webp`}
@@ -96,10 +96,14 @@ export default function IntroScreen({ active, onExplore }) {
         transform: 'translateX(-50%)',
         opacity: showBtn ? 1 : 0,
         transition: 'opacity 0.9s ease',
+        pointerEvents: showBtn ? 'all' : 'none',
         zIndex: 20,
       }}>
-        <button className="explore-btn" onClick={onExplore}>EXPLORE</button>
+        <button className="explore-btn" onClick={onNext}>EXPLORE</button>
       </div>
-    </div>
+
+      {n && <SectionIndex n={n} dark />}
+      {onBack && <ScrollDownPrompt visible={inView} onClick={onBack} label="Back" icon="↑" position="top" />}
+    </section>
   )
 }

@@ -22,6 +22,7 @@ export default function BrochuresGrid() {
         <button
           key={b.pdf}
           onClick={() => setOpenBrochure(b)}
+          className="brochure-thumb-btn"
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.8rem',
             background: 'none', border: 'none', padding: 0,
@@ -36,13 +37,8 @@ export default function BrochuresGrid() {
             <img
               src={`${import.meta.env.BASE_URL}images/brochures/${b.thumb}`}
               alt={b.label}
-              style={{
-                width: '100%', height: '100%', objectFit: 'cover',
-                filter: 'grayscale(1)',
-                transition: 'filter 0.35s ease, transform 0.35s ease',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.filter = 'grayscale(0)'; e.currentTarget.style.transform = 'scale(1.03)' }}
-              onMouseLeave={e => { e.currentTarget.style.filter = 'grayscale(1)'; e.currentTarget.style.transform = 'scale(1)' }}
+              className="brochure-thumb-img"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
           <span style={{

@@ -1,13 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 
-export default function ThreeDView() {
+export default function ThreeDView({ onLoaded, paused = false, interactive = true, autoZoomMs = 0 }) {
   const mountRef = useRef(null)
   const apiRef = useRef({})
-  const [mode, setMode] = useState('isometric')
+  const [mode, setMode] = useState('parallel')
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState(0)
+  const [showHint, setShowHint] = useState(false)
+  const onLoadedRef = useRef(onLoaded)
+  onLoadedRef.current = onLoaded
+  const pausedRef = useRef(paused)
+  pausedRef.current = paused
 
   useEffect(() => {
     const mount = mountRef.current
@@ -61,7 +67,33 @@ export default function ThreeDView() {
     let activeCamera = orthoCam
 
     let theta = Math.PI / 4, phi = Math.PI / 3.5, radius = 50
+    let baseRadius = 50
+    let zoomStartTime = null
+    // Set once this effect's cleanup has run (e.g. React StrictMode's
+    // dev-only double-mount) so a model load already in flight from a
+    // torn-down instance can't still call onLoaded a second time.
+    let cancelled = false
     const target = new THREE.Vector3()
+
+    // Manual orbit + pinch/wheel zoom — a drag/swipe or pinch on the model
+    // takes over from the auto-rotate showcase spin and gives the visitor
+    // full control. Zoom range is a fraction of the model's own fitted
+    // radius, so it scales correctly regardless of model size.
+    let userControlled = false
+    let dragging = false
+    let lastX = 0, lastY = 0
+    let hintTimer = null
+    const pointers = new Map()
+    let pinchStartDist = null
+    let pinchStartRadius = null
+    const ORBIT_SPEED = 0.008
+    const PHI_MIN = 0.15, PHI_MAX = 1.5
+    const radiusMin = () => baseRadius * 0.25
+    const radiusMax = () => baseRadius * 2.2
+    const pinchDist = () => {
+      const [a, b] = [...pointers.values()]
+      return Math.hypot(a.x - b.x, a.y - b.y)
+    }
 
     function updateOrthoFrustum() {
       const halfH = radius * orthoZoomFactor
@@ -98,10 +130,12 @@ export default function ThreeDView() {
 
     apiRef.current = {
       setMode: m => { activeCamera = m === 'perspective' ? perspCam : orthoCam },
-      zoomExtents,
     }
 
-    new GLTFLoader().load(`${import.meta.env.BASE_URL}images/model.glb`, ({ scene: model }) => {
+    const loader = new GLTFLoader()
+    loader.setMeshoptDecoder(MeshoptDecoder)
+    loader.load(`${import.meta.env.BASE_URL}images/model.glb`, ({ scene: model }) => {
+      if (cancelled) return
       model.traverse(node => {
         if (node.isMesh) {
           const mats = Array.isArray(node.material) ? node.material : [node.material]
@@ -141,67 +175,135 @@ export default function ThreeDView() {
 
       ground.position.set(sphere.center.x, fitted.min.y - sphere.radius * 0.002, sphere.center.z)
 
-      // Open on zoom-extents, isometric
+      // Frame the whole model once on load — this becomes the "home" zoom
+      // level that the pinch/wheel zoom range is measured against.
       zoomExtents()
+      baseRadius = radius
+      if (autoZoomMs > 0) zoomStartTime = performance.now()
       setLoading(false)
+      if (interactive) {
+        setShowHint(true)
+        hintTimer = setTimeout(() => setShowHint(false), 5000)
+      }
+      onLoadedRef.current?.()
     }, xhr => {
+      if (cancelled) return
       if (xhr.total) setProgress(Math.round((xhr.loaded / xhr.total) * 100))
-    }, err => { console.error(err); setLoading(false) })
+    }, err => {
+      if (cancelled) return
+      console.error(err); setLoading(false); onLoadedRef.current?.()
+    })
 
-    let dragMode = 'none', autoRotate = true, lastX = 0, lastY = 0
-
-    const getRight = () => new THREE.Vector3().subVectors(activeCamera.position, target).normalize().cross(new THREE.Vector3(0,1,0)).normalize()
-    const getUp    = () => { const r = getRight(); return new THREE.Vector3().subVectors(activeCamera.position, target).normalize().negate().cross(r).normalize() }
-
-    // Right click → orbit, left click → pan
-    const onMouseDown = e => { e.preventDefault(); autoRotate = false; lastX = e.clientX; lastY = e.clientY; dragMode = e.button === 2 ? 'orbit' : 'pan' }
-    const onMouseMove = e => {
-      if (dragMode === 'none') return
-      const dx = e.clientX - lastX, dy = e.clientY - lastY
-      lastX = e.clientX; lastY = e.clientY
-      if (dragMode === 'orbit') { theta -= dx * 0.007; phi = Math.max(0.05, Math.min(Math.PI / 2.02, phi + dy * 0.007)) }
-      if (dragMode === 'pan')   { const s = radius * 0.0012; target.addScaledVector(getRight(), -dx * s); target.addScaledVector(getUp(), dy * s) }
-    }
-    const onMouseUp  = () => { dragMode = 'none' }
-    const onWheel    = e  => { radius = Math.max(1, Math.min(2000, radius + e.deltaY * 0.08)) }
-    const onContext  = e  => e.preventDefault()
-
-    let lastPinch = null
-    const onTDown = e => { autoRotate = false; if (e.touches.length===1){dragMode='orbit';lastX=e.touches[0].clientX;lastY=e.touches[0].clientY} if(e.touches.length===2){dragMode='none';lastPinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY)} }
-    const onTMove = e => { if(e.touches.length===1&&dragMode==='orbit'){theta-=(e.touches[0].clientX-lastX)*0.007;phi=Math.max(0.05,Math.min(Math.PI/2.02,phi+(e.touches[0].clientY-lastY)*0.007));lastX=e.touches[0].clientX;lastY=e.touches[0].clientY} if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(lastPinch)radius=Math.max(1,radius*(lastPinch/d));lastPinch=d} }
-    const onTEnd   = () => { dragMode = 'none'; lastPinch = null }
     const onResize = () => {
       perspCam.aspect = mount.clientWidth / mount.clientHeight
       perspCam.updateProjectionMatrix()
       updateOrthoFrustum()
       renderer.setSize(mount.clientWidth, mount.clientHeight)
     }
+    window.addEventListener('resize', onResize)
 
-    renderer.domElement.addEventListener('mousedown',   onMouseDown)
-    window.addEventListener('mousemove',                onMouseMove)
-    window.addEventListener('mouseup',                  onMouseUp)
-    renderer.domElement.addEventListener('wheel',       onWheel,  { passive: true })
-    renderer.domElement.addEventListener('contextmenu', onContext)
-    renderer.domElement.addEventListener('touchstart',  onTDown,  { passive: true })
-    window.addEventListener('touchmove',                onTMove,  { passive: true })
-    window.addEventListener('touchend',                 onTEnd)
-    window.addEventListener('resize',                   onResize)
+    // Drag/swipe-to-orbit + two-finger pinch-to-zoom — bound to the canvas
+    // itself (not the wrapping mount div) so it never intercepts clicks on
+    // the Parallel/Perspective buttons, which are separate sibling elements
+    // layered on top.
+    const canvas = renderer.domElement
+    canvas.style.touchAction = 'none'
 
+    const dismissHint = () => {
+      userControlled = true
+      setShowHint(false)
+      clearTimeout(hintTimer)
+    }
+
+    const onPointerDown = e => {
+      canvas.setPointerCapture(e.pointerId)
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      dismissHint()
+
+      if (pointers.size === 2) {
+        dragging = false
+        pinchStartDist = pinchDist()
+        pinchStartRadius = radius
+      } else if (pointers.size === 1) {
+        dragging = true
+        lastX = e.clientX
+        lastY = e.clientY
+      }
+    }
+    const onPointerMove = e => {
+      if (!pointers.has(e.pointerId)) return
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      if (pointers.size === 2) {
+        const dist = pinchDist()
+        if (pinchStartDist) {
+          radius = Math.min(radiusMax(), Math.max(radiusMin(), pinchStartRadius * (pinchStartDist / dist)))
+        }
+        return
+      }
+
+      if (dragging) {
+        const dx = e.clientX - lastX
+        const dy = e.clientY - lastY
+        lastX = e.clientX
+        lastY = e.clientY
+        theta -= dx * ORBIT_SPEED
+        phi = Math.min(PHI_MAX, Math.max(PHI_MIN, phi - dy * ORBIT_SPEED))
+      }
+    }
+    const onPointerUp = e => {
+      pointers.delete(e.pointerId)
+      pinchStartDist = null
+      if (pointers.size === 1) {
+        const [remaining] = pointers.values()
+        dragging = true
+        lastX = remaining.x
+        lastY = remaining.y
+      } else {
+        dragging = false
+      }
+    }
+    const onWheel = e => {
+      e.preventDefault()
+      dismissHint()
+      radius = Math.min(radiusMax(), Math.max(radiusMin(), radius * (1 + e.deltaY * 0.001)))
+    }
+    if (interactive) {
+      canvas.addEventListener('pointerdown', onPointerDown)
+      canvas.addEventListener('pointermove', onPointerMove)
+      canvas.addEventListener('pointerup', onPointerUp)
+      canvas.addEventListener('pointercancel', onPointerUp)
+      canvas.addEventListener('wheel', onWheel, { passive: false })
+    }
+
+    // Continuous auto-orbit until the visitor takes over via drag/pinch/wheel.
+    // Skip the actual render/update work while scrolled off-screen so the
+    // (software-rendered, on some machines) WebGL loop doesn't compete with
+    // the rest of the page's animations for main-thread time.
     let frameId
-    const animate = () => { frameId = requestAnimationFrame(animate); if (autoRotate) theta += 0.003; updateCamera(); renderer.render(scene, activeCamera) }
+    const animate = () => {
+      frameId = requestAnimationFrame(animate)
+      if (pausedRef.current) return
+      if (!userControlled) theta += 0.003
+      if (autoZoomMs > 0 && zoomStartTime !== null) {
+        const t = Math.min(1, (performance.now() - zoomStartTime) / autoZoomMs)
+        radius = baseRadius * (1 - 0.75 * t)
+      }
+      updateCamera()
+      renderer.render(scene, activeCamera)
+    }
     animate()
 
     return () => {
+      cancelled = true
       cancelAnimationFrame(frameId)
-      renderer.domElement.removeEventListener('mousedown',   onMouseDown)
-      window.removeEventListener('mousemove',                onMouseMove)
-      window.removeEventListener('mouseup',                  onMouseUp)
-      renderer.domElement.removeEventListener('wheel',       onWheel)
-      renderer.domElement.removeEventListener('contextmenu', onContext)
-      renderer.domElement.removeEventListener('touchstart',  onTDown)
-      window.removeEventListener('touchmove',                onTMove)
-      window.removeEventListener('touchend',                 onTEnd)
-      window.removeEventListener('resize',                   onResize)
+      clearTimeout(hintTimer)
+      window.removeEventListener('resize', onResize)
+      canvas.removeEventListener('pointerdown', onPointerDown)
+      canvas.removeEventListener('pointermove', onPointerMove)
+      canvas.removeEventListener('pointerup', onPointerUp)
+      canvas.removeEventListener('pointercancel', onPointerUp)
+      canvas.removeEventListener('wheel', onWheel)
       if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement)
       renderer.dispose()
     }
@@ -219,6 +321,12 @@ export default function ThreeDView() {
     padding: '0.5rem 1rem',
     cursor: 'pointer',
   })
+
+  const hintLabelStyle = {
+    fontFamily: "'BBTorsosPro', sans-serif",
+    fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase',
+    color: '#8A8A8A',
+  }
 
   return (
     <div ref={mountRef} style={{ position: 'absolute', inset: 0 }}>
@@ -245,35 +353,40 @@ export default function ThreeDView() {
         </div>
       )}
 
-      <div style={{
-        position: 'absolute', top: '1.5rem', right: '1.5rem',
-        display: 'flex', gap: '0.5rem', zIndex: 10,
-      }}>
-        <button
-          style={btnStyle(mode === 'isometric')}
-          onClick={() => { apiRef.current.setMode?.('isometric'); setMode('isometric') }}
-        >Isometric</button>
-        <button
-          style={btnStyle(mode === 'perspective')}
-          onClick={() => { apiRef.current.setMode?.('perspective'); setMode('perspective') }}
-        >Perspective</button>
-        <button
-          style={btnStyle(false)}
-          onClick={() => apiRef.current.zoomExtents?.()}
-        >Zoom Extents</button>
-      </div>
+      {interactive && (
+        <div style={{
+          position: 'absolute', top: '1.5rem', right: '1.5rem',
+          display: 'flex', gap: '0.5rem', zIndex: 10,
+        }}>
+          <button
+            style={btnStyle(mode === 'parallel')}
+            onClick={() => { apiRef.current.setMode?.('parallel'); setMode('parallel') }}
+          >Parallel</button>
+          <button
+            style={btnStyle(mode === 'perspective')}
+            onClick={() => { apiRef.current.setMode?.('perspective'); setMode('perspective') }}
+          >Perspective</button>
+        </div>
+      )}
 
-      <div style={{
-        position: 'absolute', bottom: '6rem', left: '50%',
-        transform: 'translateX(-50%)',
-        fontFamily: "'BBTorsosPro', sans-serif",
-        fontSize: '0.6rem', letterSpacing: '0.18em',
-        color: '#8A8A8A', textTransform: 'uppercase',
-        pointerEvents: 'none', userSelect: 'none', zIndex: 10,
-        whiteSpace: 'nowrap',
-      }}>
-        right drag · orbit &nbsp;|&nbsp; left drag · pan &nbsp;|&nbsp; scroll · zoom
-      </div>
+      {interactive && (
+        <div style={{
+          position: 'absolute', top: '1.8rem', left: '50%', transform: 'translateX(-50%)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
+          zIndex: 10, pointerEvents: 'none',
+          opacity: showHint ? 1 : 0,
+          transition: 'opacity 0.6s ease',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <span className="hint-hand" style={{ fontSize: '1.2rem' }}>🖐️</span>
+            <span style={hintLabelStyle}>Drag to rotate</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <span className="hint-pinch" style={{ fontSize: '1.2rem' }}>🤏</span>
+            <span style={hintLabelStyle}>Pinch to zoom</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
