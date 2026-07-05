@@ -20,12 +20,12 @@ const names = ['Zhasmin Roumieh', 'Mareike Sophie Steffen', 'Dikshya Pokharel']
 // Direct jumps to sections a visitor might want without scrolling through
 // everything — indices must match the section order set up in App.jsx.
 const quickLinks = [
-  { label: 'Site Analysis', index: 6 },
-  { label: 'Interactive Chat', index: 8 },
-  { label: 'Explore 3D', index: 9 },
-  { label: 'Storyboard', index: 10 },
-  { label: 'Scenarios', index: 11 },
-  { label: 'Brochures', index: 13 },
+  { label: 'Marktplatz', index: 5 },
+  { label: 'Interactive Chat', index: 7 },
+  { label: 'Explore 3D', index: 8 },
+  { label: 'Storyboard', index: 9 },
+  { label: 'Scenarios', index: 10 },
+  { label: 'Brochures', index: 12 },
 ]
 
 export default function CoverSection({ innerRef, onNext, onJump, n }) {

@@ -58,16 +58,18 @@ export default function TypewriterSection({ innerRef, text, mode = 'type', onNex
       <div style={{
         position: 'relative', zIndex: 10, textAlign: 'center',
         width: mode === 'fade' ? 'min(920px, 85vw)' : 'min(780px, 80vw)',
-        maxHeight: '78vh', overflowY: 'auto',
+        maxHeight: '92vh', overflow: 'hidden',
         padding: '0 0.5rem',
       }}>
         <p style={{
           fontFamily: "'BBTorsosPro', sans-serif",
-          fontSize: mode === 'fade' ? 'clamp(0.85rem, 1.5vw, 1.4rem)' : 'clamp(1.1rem, 2.6vw, 2.4rem)',
+          fontSize: mode === 'fade'
+            ? (followUp ? 'clamp(0.75rem, 1.25vw, 1.05rem)' : 'clamp(0.85rem, 1.5vw, 1.4rem)')
+            : 'clamp(1.1rem, 2.6vw, 2.4rem)',
           fontWeight: 400,
           color: '#1a1a1a',
           letterSpacing: '0.03em',
-          lineHeight: 1.6,
+          lineHeight: 1.5,
           whiteSpace: 'pre-line',
           margin: 0,
           opacity: visible ? 1 : 0,
@@ -79,29 +81,40 @@ export default function TypewriterSection({ innerRef, text, mode = 'type', onNex
 
         {followUp && (
           <div style={{
-            marginTop: '3rem',
+            marginTop: '1.6rem',
             opacity: done ? motion.opacity : 0,
             transform: motion.transform,
             transition: 'opacity 0.8s ease',
           }}>
-            <div style={{ borderTop: '2px solid #a82b39', width: '3.5rem', margin: '0 auto 1.2rem' }} />
+            <div style={{ borderTop: '2px solid #a82b39', width: '3.5rem', margin: '0 auto 1rem' }} />
             <h2 style={{
               fontFamily: "'BBTorsosPro', sans-serif",
-              fontSize: 'clamp(2rem, 5.5vw, 5rem)',
+              fontSize: 'clamp(1.4rem, 3.2vw, 2.6rem)',
               fontWeight: 700, textTransform: 'uppercase',
               letterSpacing: '0.02em', color: '#a82b39',
               margin: 0, lineHeight: 0.95,
             }}>
               {followUp.title}
             </h2>
-            {followUp.subtitle && (
-              <p style={{
-                fontFamily: "'BBTorsosPro', sans-serif",
-                fontSize: '0.9rem', color: '#8A6A6A',
-                letterSpacing: '0.05em', marginTop: '0.8rem',
+            {followUp.qr && (
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.9rem',
+                marginTop: '1.1rem', padding: '0.8rem 1.1rem',
+                background: 'rgba(255,255,255,0.6)', borderRadius: '14px',
               }}>
-                {'// ' + followUp.subtitle.toLowerCase()}
-              </p>
+                <img
+                  src={followUp.qr}
+                  alt="QR code linking to the Agentic Square website"
+                  style={{ width: '64px', height: '64px', flexShrink: 0 }}
+                />
+                <p style={{
+                  fontFamily: "'BBTorsosPro', sans-serif",
+                  fontSize: '0.75rem', lineHeight: 1.4, textAlign: 'left',
+                  color: '#1a1a1a', margin: 0, maxWidth: '150px',
+                }}>
+                  Scan to try it now on your phone
+                </p>
+              </div>
             )}
           </div>
         )}

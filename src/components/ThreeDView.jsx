@@ -33,7 +33,7 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
     scene.background = new THREE.Color('#F0EDE5')
 
     // Base ambient fill (kept low so the sun light below can cast visible shadows)
-    scene.add(new THREE.AmbientLight(0xffffff, 1.6))
+    scene.add(new THREE.AmbientLight(0xffffff, 2.4))
     scene.add(new THREE.HemisphereLight(0xffffff, 0xd0e8e4, 0.9))
 
     // Sun / key light — casts the shadows
@@ -124,7 +124,7 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
       const sphere = box.getBoundingSphere(new THREE.Sphere())
       const vFit = sphere.radius / Math.sin(THREE.MathUtils.degToRad(perspCam.fov / 2))
       const hFit = vFit / perspCam.aspect
-      radius = Math.max(vFit, hFit) * 1.15
+      radius = Math.max(vFit, hFit) * 0.85
       updateCamera()
     }
 
