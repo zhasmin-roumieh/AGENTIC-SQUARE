@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import useScrollContainerProgress from './hooks/useScrollContainerProgress'
 import useIdle from './hooks/useIdle'
 import CustomCursor from './components/CustomCursor'
@@ -41,10 +41,18 @@ const AIM_TEXT =
 
 export default function App() {
   const refs = useRef([])
+  const containerRef = useRef(null)
   const setRef = i => el => { refs.current[i] = el }
   const scrollTo = i => refs.current[i]?.scrollIntoView({ behavior: 'smooth' })
   const progress = useScrollContainerProgress()
   const idle = useIdle(IDLE_TIMEOUT_MS)
+
+  // Some browsers try to restore the scroll container's exact scroll
+  // position across a reload, which would drop a "restart" back mid-deck
+  // instead of at the cover. Force it back to the top on every fresh load.
+  useLayoutEffect(() => {
+    if (containerRef.current) containerRef.current.scrollTop = 0
+  }, [])
 
   return (
     <>
@@ -53,7 +61,7 @@ export default function App() {
       <ScrollProgressRail progress={progress} />
       {progress > 0.01 && <RestartButton />}
       {idle && <Screensaver />}
-      <div className="scroll-container">
+      <div className="scroll-container" ref={containerRef}>
       <CoverSection innerRef={setRef(0)} onNext={() => scrollTo(1)} onJump={scrollTo} n={1} />
 
       <IntroSection
