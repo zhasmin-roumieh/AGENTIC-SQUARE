@@ -10,7 +10,7 @@ export default function RestartButton() {
         position: 'fixed', bottom: '3rem', left: '2.5rem', zIndex: 45,
         display: 'flex', alignItems: 'center', gap: '0.4rem',
         background: 'none', border: 'none', cursor: 'pointer',
-        color: '#8A8A8A',
+        color: '#fff', mixBlendMode: 'difference',
         fontFamily: "'BBTorsosPro', sans-serif",
         fontSize: '0.75rem', fontWeight: 400,
         letterSpacing: '0.2em', textTransform: 'uppercase',
