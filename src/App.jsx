@@ -4,7 +4,7 @@ import useIdle from './hooks/useIdle'
 import CustomCursor from './components/CustomCursor'
 import GrainOverlay from './components/GrainOverlay'
 import ScrollProgressRail from './components/ScrollProgressRail'
-import HomeButton from './components/HomeButton'
+import RestartButton from './components/RestartButton'
 import Screensaver from './components/Screensaver'
 import CoverSection from './components/CoverSection'
 import IntroSection from './components/IntroSection'
@@ -51,7 +51,7 @@ export default function App() {
       <CustomCursor />
       <GrainOverlay />
       <ScrollProgressRail progress={progress} />
-      {progress > 0.01 && <HomeButton onClick={() => scrollTo(0)} />}
+      {progress > 0.01 && <RestartButton />}
       {idle && <Screensaver />}
       <div className="scroll-container">
       <CoverSection innerRef={setRef(0)} onNext={() => scrollTo(1)} onJump={scrollTo} n={1} />
@@ -125,7 +125,7 @@ export default function App() {
       />
 
       <ExpansionSection
-        innerRef={setRef(13)} onRestart={() => scrollTo(0)} onBack={() => scrollTo(12)} n={14}
+        innerRef={setRef(13)} onRestart={() => window.location.reload()} onBack={() => scrollTo(12)} n={14}
       />
       </div>
     </>

@@ -1,9 +1,10 @@
-// Persistent "return to home" control, fixed on screen across every
-// section (not just reachable by scrolling Back through the whole deck).
-export default function HomeButton({ onClick }) {
+// Persistent "restart" control, fixed on screen across every section except
+// the cover — reloads the page so the whole site comes back exactly as it
+// was on first load (same as a manual browser refresh).
+export default function RestartButton() {
   return (
     <button
-      onClick={onClick}
+      onClick={() => window.location.reload()}
       data-cursor-hover
       style={{
         position: 'fixed', bottom: '3rem', left: '2.5rem', zIndex: 45,
@@ -16,8 +17,8 @@ export default function HomeButton({ onClick }) {
         padding: '0.7rem 1.2rem',
       }}
     >
-      <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>⌂</span>
-      <span>Home</span>
+      <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>↻</span>
+      <span>Restart</span>
     </button>
   )
 }
