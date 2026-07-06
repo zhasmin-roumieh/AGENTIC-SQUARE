@@ -23,7 +23,7 @@ const IDLE_TIMEOUT_MS = 35 * 1000
 // 3D section so the model's auto-rotate has time to show off, then keeps
 // going and loops back to the top. Any touch/click/scroll/key press (via
 // useIdle's listeners) cancels it instantly.
-const AUTOSCROLL_SPEED_PX_PER_SEC = 220
+const AUTOSCROLL_SPEED_PX_PER_SEC = 100
 const AUTOSCROLL_MODEL_DWELL_MS = 26000
 const EXPLORE_DESIGN_INDEX = 9
 
@@ -109,9 +109,10 @@ export default function App() {
       cancelAnimationFrame(frameId)
       // Whoever interrupted the tour is a fresh visitor arriving at the
       // tablet — send them to the cover instead of stranding them wherever
-      // the tour happened to be, same as hitting Restart. Done before
-      // restoring smooth-scroll/snap so the jump is instant, not animated.
-      container.scrollTop = 0
+      // the tour happened to be, same as hitting Restart. `behavior: 'instant'`
+      // forces an immediate jump regardless of any CSS scroll-behavior, so
+      // this doesn't depend on the snap/smooth styles being cleared first.
+      container.scrollTo({ top: 0, behavior: 'instant' })
       container.style.scrollSnapType = ''
       container.style.scrollBehavior = ''
     }
