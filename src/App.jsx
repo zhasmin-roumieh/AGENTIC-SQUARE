@@ -17,13 +17,12 @@ import ExpansionSection from './components/ExpansionSection'
 
 const BASE = import.meta.env.BASE_URL
 const IDLE_TIMEOUT_MS = 35 * 1000
-// Attract mode: once the site's been idle this long, it starts scrolling
-// itself down the page like a normal visitor would — a steady, continuous
-// scroll rather than jumping section to section. It pauses briefly on the
-// 3D section so the model's auto-rotate has time to show off, then keeps
-// going and loops back to the top. Any touch/click/scroll/key press (via
-// useIdle's listeners) cancels it instantly.
-const AUTOSCROLL_SPEED_PX_PER_SEC = 100
+// Attract mode: once the site's been idle this long, it tours itself as a
+// slideshow — jumping slide to slide with a dwell on each, not a continuous
+// scroll. It dwells longer on the 3D section so the model's auto-rotate has
+// time to show off, then loops back to the cover. Any touch/click/scroll/key
+// press (via useIdle's listeners) cancels it instantly.
+const AUTOSCROLL_DWELL_MS = 7000
 const AUTOSCROLL_MODEL_DWELL_MS = 26000
 const EXPLORE_DESIGN_INDEX = 9
 
@@ -62,59 +61,29 @@ export default function App() {
     if (containerRef.current) containerRef.current.scrollTop = 0
   }, [])
 
-  // Attract-mode autoscroll — a steady, continuous scroll down the real
-  // page (not a jump-cut slideshow), pausing once on the 3D section for its
-  // auto-rotate, then looping back to the top. Scroll-snap AND the CSS
-  // smooth scroll-behavior are both switched off for the duration — with
-  // smooth scrolling left on, every per-frame scrollTop write re-triggers
-  // the browser's own scroll animation and they fight each other, making
-  // the motion stutter and lag far behind the intended speed. Both are
-  // restored the instant this stops.
+  // Attract-mode slideshow — jumps slide to slide (same smooth scrollIntoView
+  // as the Next/Back buttons use), dwelling on each before advancing, with a
+  // longer dwell on the 3D section for its auto-rotate. Loops back to the
+  // cover at the end.
   useEffect(() => {
     if (!idle) return
-    const container = containerRef.current
-    if (!container) return
-
-    container.style.scrollSnapType = 'none'
-    container.style.scrollBehavior = 'auto'
-    let frameId
-    let last = performance.now()
-    let resumeAt = 0
-    let pausedAtModel = false
-
-    const tick = now => {
-      frameId = requestAnimationFrame(tick)
-      const dt = (now - last) / 1000
-      last = now
-      if (now < resumeAt) return
-
-      const modelTop = refs.current[EXPLORE_DESIGN_INDEX]?.offsetTop ?? 0
-      if (!pausedAtModel && container.scrollTop >= modelTop) {
-        pausedAtModel = true
-        resumeAt = now + AUTOSCROLL_MODEL_DWELL_MS
-        return
-      }
-
-      const max = container.scrollHeight - container.clientHeight
-      let next = container.scrollTop + AUTOSCROLL_SPEED_PX_PER_SEC * dt
-      if (next >= max) {
-        next = 0
-        pausedAtModel = false
-      }
-      container.scrollTop = next
+    let i = 0
+    let timer
+    const step = () => {
+      scrollTo(i)
+      const dwell = i === EXPLORE_DESIGN_INDEX ? AUTOSCROLL_MODEL_DWELL_MS : AUTOSCROLL_DWELL_MS
+      i = (i + 1) % refs.current.length
+      timer = setTimeout(step, dwell)
     }
-    frameId = requestAnimationFrame(tick)
+    step()
 
     return () => {
-      cancelAnimationFrame(frameId)
+      clearTimeout(timer)
       // Whoever interrupted the tour is a fresh visitor arriving at the
       // tablet — send them to the cover instead of stranding them wherever
       // the tour happened to be, same as hitting Restart. `behavior: 'instant'`
-      // forces an immediate jump regardless of any CSS scroll-behavior, so
-      // this doesn't depend on the snap/smooth styles being cleared first.
-      container.scrollTo({ top: 0, behavior: 'instant' })
-      container.style.scrollSnapType = ''
-      container.style.scrollBehavior = ''
+      // forces an immediate jump regardless of any CSS scroll-behavior.
+      containerRef.current?.scrollTo({ top: 0, behavior: 'instant' })
     }
   }, [idle])
 
