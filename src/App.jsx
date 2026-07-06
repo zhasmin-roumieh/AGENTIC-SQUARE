@@ -80,10 +80,13 @@ export default function App() {
     return () => {
       clearTimeout(timer)
       // Whoever interrupted the tour is a fresh visitor arriving at the
-      // tablet — send them to the cover instead of stranding them wherever
-      // the tour happened to be, same as hitting Restart. `behavior: 'instant'`
-      // forces an immediate jump regardless of any CSS scroll-behavior.
-      containerRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+      // tablet — send them back to a truly fresh cover, same as hitting
+      // Restart. A plain scrollTop reset isn't enough: sections like the
+      // typewriter slides only ever play their type/fade-in once per
+      // mount, so if the tour had already scrolled past them, revisiting
+      // later would show the text stuck in its finished state instead of
+      // replaying. A full reload resets that state along with everything else.
+      window.location.reload()
     }
   }, [idle])
 
