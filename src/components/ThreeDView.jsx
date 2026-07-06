@@ -247,7 +247,7 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
         const dy = e.clientY - lastY
         lastX = e.clientX
         lastY = e.clientY
-        theta -= dx * ORBIT_SPEED
+        theta += dx * ORBIT_SPEED
         phi = Math.min(PHI_MAX, Math.max(PHI_MIN, phi - dy * ORBIT_SPEED))
       }
     }
