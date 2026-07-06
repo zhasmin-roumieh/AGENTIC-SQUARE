@@ -17,10 +17,13 @@ import ExpansionSection from './components/ExpansionSection'
 
 const BASE = import.meta.env.BASE_URL
 const IDLE_TIMEOUT_MS = 35 * 1000
-// Attract mode: once the site's been idle this long, it tours itself —
-// auto-scrolling section by section and looping back to the cover. Any
-// touch/click/scroll/key press (via useIdle's listeners) cancels it instantly.
-const AUTOSCROLL_DWELL_MS = 6000
+// Attract mode: once the site's been idle this long, it starts scrolling
+// itself down the page like a normal visitor would — a steady, continuous
+// scroll rather than jumping section to section. It pauses briefly on the
+// 3D section so the model's auto-rotate has time to show off, then keeps
+// going and loops back to the top. Any touch/click/scroll/key press (via
+// useIdle's listeners) cancels it instantly.
+const AUTOSCROLL_SPEED_PX_PER_SEC = 60
 const AUTOSCROLL_MODEL_DWELL_MS = 26000
 const EXPLORE_DESIGN_INDEX = 9
 
@@ -59,21 +62,49 @@ export default function App() {
     if (containerRef.current) containerRef.current.scrollTop = 0
   }, [])
 
-  // Attract-mode autoscroll — tours the whole deck from the top, dwelling
-  // longer on the 3D section so its auto-rotate has time to show the model
-  // off, then loops. Stops the instant `idle` flips back to false.
+  // Attract-mode autoscroll — a steady, continuous scroll down the real
+  // page (not a jump-cut slideshow), pausing once on the 3D section for its
+  // auto-rotate, then looping back to the top. Scroll-snap is switched off
+  // for the duration so per-frame position updates aren't fought by the
+  // browser trying to snap back; it's restored the instant this stops.
   useEffect(() => {
     if (!idle) return
-    let i = 0
-    let timer
-    const step = () => {
-      scrollTo(i)
-      const dwell = i === EXPLORE_DESIGN_INDEX ? AUTOSCROLL_MODEL_DWELL_MS : AUTOSCROLL_DWELL_MS
-      i = (i + 1) % refs.current.length
-      timer = setTimeout(step, dwell)
+    const container = containerRef.current
+    if (!container) return
+
+    container.style.scrollSnapType = 'none'
+    let frameId
+    let last = performance.now()
+    let resumeAt = 0
+    let pausedAtModel = false
+
+    const tick = now => {
+      frameId = requestAnimationFrame(tick)
+      const dt = (now - last) / 1000
+      last = now
+      if (now < resumeAt) return
+
+      const modelTop = refs.current[EXPLORE_DESIGN_INDEX]?.offsetTop ?? 0
+      if (!pausedAtModel && container.scrollTop >= modelTop) {
+        pausedAtModel = true
+        resumeAt = now + AUTOSCROLL_MODEL_DWELL_MS
+        return
+      }
+
+      const max = container.scrollHeight - container.clientHeight
+      let next = container.scrollTop + AUTOSCROLL_SPEED_PX_PER_SEC * dt
+      if (next >= max) {
+        next = 0
+        pausedAtModel = false
+      }
+      container.scrollTop = next
     }
-    step()
-    return () => clearTimeout(timer)
+    frameId = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(frameId)
+      container.style.scrollSnapType = ''
+    }
   }, [idle])
 
   return (
