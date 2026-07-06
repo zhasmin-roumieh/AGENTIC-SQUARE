@@ -284,7 +284,7 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
     const animate = () => {
       frameId = requestAnimationFrame(animate)
       if (pausedRef.current) return
-      if (!userControlled) theta += 0.003
+      if (!userControlled) theta += 0.012
       if (autoZoomMs > 0 && zoomStartTime !== null) {
         const t = Math.min(1, (performance.now() - zoomStartTime) / autoZoomMs)
         radius = baseRadius * (1 - 0.75 * t)

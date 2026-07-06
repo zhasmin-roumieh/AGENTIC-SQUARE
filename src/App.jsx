@@ -23,7 +23,7 @@ const IDLE_TIMEOUT_MS = 35 * 1000
 // 3D section so the model's auto-rotate has time to show off, then keeps
 // going and loops back to the top. Any touch/click/scroll/key press (via
 // useIdle's listeners) cancels it instantly.
-const AUTOSCROLL_SPEED_PX_PER_SEC = 60
+const AUTOSCROLL_SPEED_PX_PER_SEC = 220
 const AUTOSCROLL_MODEL_DWELL_MS = 26000
 const EXPLORE_DESIGN_INDEX = 9
 
@@ -64,15 +64,19 @@ export default function App() {
 
   // Attract-mode autoscroll — a steady, continuous scroll down the real
   // page (not a jump-cut slideshow), pausing once on the 3D section for its
-  // auto-rotate, then looping back to the top. Scroll-snap is switched off
-  // for the duration so per-frame position updates aren't fought by the
-  // browser trying to snap back; it's restored the instant this stops.
+  // auto-rotate, then looping back to the top. Scroll-snap AND the CSS
+  // smooth scroll-behavior are both switched off for the duration — with
+  // smooth scrolling left on, every per-frame scrollTop write re-triggers
+  // the browser's own scroll animation and they fight each other, making
+  // the motion stutter and lag far behind the intended speed. Both are
+  // restored the instant this stops.
   useEffect(() => {
     if (!idle) return
     const container = containerRef.current
     if (!container) return
 
     container.style.scrollSnapType = 'none'
+    container.style.scrollBehavior = 'auto'
     let frameId
     let last = performance.now()
     let resumeAt = 0
@@ -103,7 +107,13 @@ export default function App() {
 
     return () => {
       cancelAnimationFrame(frameId)
+      // Whoever interrupted the tour is a fresh visitor arriving at the
+      // tablet — send them to the cover instead of stranding them wherever
+      // the tour happened to be, same as hitting Restart. Done before
+      // restoring smooth-scroll/snap so the jump is instant, not animated.
+      container.scrollTop = 0
       container.style.scrollSnapType = ''
+      container.style.scrollBehavior = ''
     }
   }, [idle])
 
@@ -160,7 +170,7 @@ export default function App() {
 
       <ImageSection
         innerRef={setRef(8)} src={`${BASE}images/manual.png`} alt="Assembly manual"
-        title="Manual" fit="contain" bordered
+        title="Manual" fit="contain"
         onNext={() => scrollTo(9)} onBack={() => scrollTo(7)} n={9}
       />
 
