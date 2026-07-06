@@ -160,7 +160,7 @@ export default function App() {
 
       <ImageSection
         innerRef={setRef(8)} src={`${BASE}images/manual.png`} alt="Assembly manual"
-        title="Manual" fit="contain"
+        title="Manual" fit="contain" bordered
         onNext={() => scrollTo(9)} onBack={() => scrollTo(7)} n={9}
       />
 

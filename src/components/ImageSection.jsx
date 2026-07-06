@@ -4,7 +4,7 @@ import ScrollDownPrompt from './ScrollDownPrompt'
 import SectionIndex from './SectionIndex'
 import TitleHeader from './TitleHeader'
 
-export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, text, textPosition = 'none', fit = 'cover', onNext, onBack, n }) {
+export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, text, textPosition = 'none', fit = 'cover', bordered = false, onNext, onBack, n }) {
   const ref = useRef(null)
   const attachRef = el => { ref.current = el; innerRef?.(el) }
   const inView = useInView(ref)
@@ -19,17 +19,24 @@ export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, 
       <TitleHeader eyebrow={eyebrow} title={title} active={inView} />
 
       <div style={{ position: 'relative', flex: '1 1 auto', overflow: 'hidden', background: isContain ? '#fff' : 'transparent' }}>
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          className={`reveal-img${inView ? ' is-in' : ''}`}
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
-            objectFit: fit,
-          }}
-        />
+        <div style={{
+          position: 'absolute',
+          inset: bordered ? 'clamp(1.25rem, 3.5vw, 3rem)' : 0,
+          border: bordered ? '3px solid #111' : 'none',
+          overflow: 'hidden',
+        }}>
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            className={`reveal-img${inView ? ' is-in' : ''}`}
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              objectFit: fit,
+            }}
+          />
+        </div>
 
         {hasText && (
           <div style={{
