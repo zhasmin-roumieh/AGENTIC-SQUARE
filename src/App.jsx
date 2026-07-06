@@ -61,8 +61,8 @@ export default function App() {
     if (containerRef.current) containerRef.current.scrollTop = 0
   }, [])
 
-  // Attract-mode slideshow — jumps slide to slide (same smooth scrollIntoView
-  // as the Next/Back buttons use), dwelling on each before advancing, with a
+  // Attract-mode slideshow — each slide just appears (an instant cut, no
+  // visible scrolling motion), dwelling on each before advancing, with a
   // longer dwell on the 3D section for its auto-rotate. Loops back to the
   // cover at the end.
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function App() {
     let i = 0
     let timer
     const step = () => {
-      scrollTo(i)
+      refs.current[i]?.scrollIntoView({ behavior: 'instant' })
       const dwell = i === EXPLORE_DESIGN_INDEX ? AUTOSCROLL_MODEL_DWELL_MS : AUTOSCROLL_DWELL_MS
       i = (i + 1) % refs.current.length
       timer = setTimeout(step, dwell)
