@@ -112,7 +112,7 @@ export default function TypewriterSection({ innerRef, text, mode = 'type', onNex
                   fontSize: '0.75rem', lineHeight: 1.4, textAlign: 'left',
                   color: '#1a1a1a', margin: 0, maxWidth: '150px',
                 }}>
-                  Scan to try it now on your phone
+                  View it on the tablet in the room
                 </p>
               </div>
             )}

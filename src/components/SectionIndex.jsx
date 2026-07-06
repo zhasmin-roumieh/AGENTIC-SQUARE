@@ -1,4 +1,4 @@
-export default function SectionIndex({ n, total = 14, dark = false }) {
+export default function SectionIndex({ n, total = 15, dark = false }) {
   return (
     <div style={{
       position: 'absolute', bottom: '2.5rem', right: '2.5rem',

@@ -329,7 +329,7 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
   }
 
   return (
-    <div ref={mountRef} style={{ position: 'absolute', inset: 0 }}>
+    <div ref={mountRef} style={{ position: 'absolute', inset: 0, touchAction: 'none' }}>
       {loading && (
         <div style={{
           position: 'absolute', inset: 0,

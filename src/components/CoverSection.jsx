@@ -22,10 +22,11 @@ const names = ['Zhasmin Roumieh', 'Mareike Sophie Steffen', 'Dikshya Pokharel']
 const quickLinks = [
   { label: 'Marktplatz', index: 5 },
   { label: 'Interactive Chat', index: 7 },
-  { label: 'Explore 3D', index: 8 },
-  { label: 'Storyboard', index: 9 },
-  { label: 'Scenarios', index: 10 },
-  { label: 'Brochures', index: 12 },
+  { label: 'Manual', index: 8 },
+  { label: 'Explore 3D', index: 9 },
+  { label: 'Storyboard', index: 10 },
+  { label: 'Scenarios', index: 11 },
+  { label: 'Brochures', index: 13 },
 ]
 
 export default function CoverSection({ innerRef, onNext, onJump, n }) {

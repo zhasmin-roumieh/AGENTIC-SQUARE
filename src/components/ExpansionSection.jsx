@@ -5,7 +5,7 @@ import ScrollDownPrompt from './ScrollDownPrompt'
 import SectionIndex from './SectionIndex'
 
 const EXPANSION_TEXT =
-  'Citizens choose their own site of intervention and its size. We expect the project to expand from one location to another, and from one season to the next. People hold the agency to shape their own spaces — AI only assists.'
+  'Citizens choose their own site and scale. The project expands place to place, season to season — people hold the agency to shape their spaces, AI only assists.'
 
 export default function ExpansionSection({ innerRef, onRestart, onBack, n }) {
   const ref = useRef(null)

@@ -1,11 +1,10 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import useScrollContainerProgress from './hooks/useScrollContainerProgress'
 import useIdle from './hooks/useIdle'
 import CustomCursor from './components/CustomCursor'
 import GrainOverlay from './components/GrainOverlay'
 import ScrollProgressRail from './components/ScrollProgressRail'
 import RestartButton from './components/RestartButton'
-import Screensaver from './components/Screensaver'
 import CoverSection from './components/CoverSection'
 import IntroSection from './components/IntroSection'
 import TypewriterSection from './components/TypewriterSection'
@@ -18,15 +17,21 @@ import ExpansionSection from './components/ExpansionSection'
 
 const BASE = import.meta.env.BASE_URL
 const IDLE_TIMEOUT_MS = 35 * 1000
+// Attract mode: once the site's been idle this long, it tours itself —
+// auto-scrolling section by section and looping back to the cover. Any
+// touch/click/scroll/key press (via useIdle's listeners) cancels it instantly.
+const AUTOSCROLL_DWELL_MS = 6000
+const AUTOSCROLL_MODEL_DWELL_MS = 26000
+const EXPLORE_DESIGN_INDEX = 9
 
 const STORY_TEXT =
   'We all know public spaces are very important places of encounter and social interactions. Cities that grow organically grow their public spaces alongside their communities. But in this district of Wolfsburg, Westhagen this has been difficult.'
 
 const WESTHAGEN_TEXT = [
-  "Westhagen sits in the southwest of the city center and is home to about 9,000 residents. Wolfsburg's rapid development is particularly evident in this district where high rise housing units developed during 1960s still characterize this district today.",
-  'It is one of the cheapest places to live and naturally attracts residents and young families as an arrival zone. However, communities rapidly change as residents leave for better districts as it currently has mostly outdated housing units in need of renovation. Due to this reason the community ties are very weak and public spaces are neglected.',
-  'However, it also has many potentials. It is a growing district and has one of the highest diversities in Wolfsburg with around 64 percent residents with a migration background.',
-  'Seeing this potential our project Agentic Square proposes co creation of neighbourhood spaces that are led by communities and guided by AI.',
+  "Westhagen, southwest of Wolfsburg's center, is home to about 9,000 residents. 1960s high-rise housing still defines the district today.",
+  "It's one of the cheapest places to live, drawing young families as an arrival zone — but outdated housing pushes residents out quickly, weakening community ties and neglecting public spaces.",
+  'Yet it has real potential: a growing district with one of the highest diversities in Wolfsburg, around 64% with a migration background.',
+  'Agentic Square proposes co-creating neighbourhood spaces — led by communities, guided by AI.',
 ]
 
 const SITE_ANALYSIS_TEXT = [
@@ -34,7 +39,7 @@ const SITE_ANALYSIS_TEXT = [
 ]
 
 const STORYBOARD_TEXT =
-  'Neighbors come together on the Marktplatz to plan and build their own playground, step by step, guided by AI. Brochures break the build down into simple stages, while AR visualization lets everyone preview the design on-site before anything is built — so families know exactly what they\'re working towards. Then it\'s hands-on: parents and their kids sort pallets, stack bricks and assemble the pieces together, turning a shared afternoon of building into a playground the whole community helped create.'
+  "Neighbors plan and build their own playground on the Marktplatz, step by step, guided by AI. Brochures break the build into simple stages, while AR lets families preview the design on-site before anything is built. Then it's hands-on — parents and kids sort pallets, stack bricks, and build it together."
 
 const AIM_TEXT =
   "Our project's aim is to empower neighborhoods to create their own public spaces together and turn the current fragmented spaces into community anchored spaces. The components of the project are- an app that contains AI where people can converse in the form of chat, resources such as manuals, plans and brochures\n\nAI provides guidance through webchats, supply of manuals, brochures and technical implementation of the project from creation, mediation to dismantling. Additionally it provides information on materials and construction.\n\nBut the power of creation lies within the people who democratically decide on the outcome."
@@ -54,13 +59,29 @@ export default function App() {
     if (containerRef.current) containerRef.current.scrollTop = 0
   }, [])
 
+  // Attract-mode autoscroll — tours the whole deck from the top, dwelling
+  // longer on the 3D section so its auto-rotate has time to show the model
+  // off, then loops. Stops the instant `idle` flips back to false.
+  useEffect(() => {
+    if (!idle) return
+    let i = 0
+    let timer
+    const step = () => {
+      scrollTo(i)
+      const dwell = i === EXPLORE_DESIGN_INDEX ? AUTOSCROLL_MODEL_DWELL_MS : AUTOSCROLL_DWELL_MS
+      i = (i + 1) % refs.current.length
+      timer = setTimeout(step, dwell)
+    }
+    step()
+    return () => clearTimeout(timer)
+  }, [idle])
+
   return (
     <>
       <CustomCursor />
       <GrainOverlay />
       <ScrollProgressRail progress={progress} />
       {progress > 0.01 && <RestartButton />}
-      {idle && <Screensaver />}
       <div className="scroll-container" ref={containerRef}>
       <CoverSection innerRef={setRef(0)} onNext={() => scrollTo(1)} onJump={scrollTo} n={1} />
 
@@ -106,34 +127,40 @@ export default function App() {
         onNext={() => scrollTo(8)} onBack={() => scrollTo(6)} n={8}
       />
 
+      <ImageSection
+        innerRef={setRef(8)} src={`${BASE}images/manual.png`} alt="Assembly manual"
+        title="Manual" fit="contain"
+        onNext={() => scrollTo(9)} onBack={() => scrollTo(7)} n={9}
+      />
+
       <ExploreDesignSection
-        innerRef={setRef(8)} onNext={() => scrollTo(9)} onBack={() => scrollTo(7)} n={9}
+        innerRef={setRef(9)} onNext={() => scrollTo(10)} onBack={() => scrollTo(8)} n={10}
       />
 
       <StoryboardSection
-        innerRef={setRef(9)} text={STORYBOARD_TEXT}
-        onNext={() => scrollTo(10)} onBack={() => scrollTo(8)} n={10}
-      />
-
-      <ImageSection
-        innerRef={setRef(10)} src={`${BASE}images/comparisons/westhagen-plays.webp`} alt="Westhagen Plays"
-        eyebrow="Design Scenarios" title="Westhagen Plays" fit="contain"
+        innerRef={setRef(10)} text={STORYBOARD_TEXT}
         onNext={() => scrollTo(11)} onBack={() => scrollTo(9)} n={11}
       />
 
-      <CompareSliderSection
-        innerRef={setRef(11)} eyebrow="Design Scenarios" title="Urban Gardening & Wine Fest"
-        imageA={`${BASE}images/comparisons/urban-gardening.webp`} labelA="Urban Gardening"
-        imageB={`${BASE}images/comparisons/wine-fest.webp`} labelB="Wine Fest"
+      <ImageSection
+        innerRef={setRef(11)} src={`${BASE}images/comparisons/westhagen-plays.webp`} alt="Westhagen Plays"
+        eyebrow="Design Scenarios" title="Westhagen Plays" fit="contain"
         onNext={() => scrollTo(12)} onBack={() => scrollTo(10)} n={12}
       />
 
+      <CompareSliderSection
+        innerRef={setRef(12)} eyebrow="Design Scenarios" title="Urban Gardening & Wine Fest"
+        imageA={`${BASE}images/comparisons/urban-gardening.webp`} labelA="Urban Gardening"
+        imageB={`${BASE}images/comparisons/wine-fest.webp`} labelB="Wine Fest"
+        onNext={() => scrollTo(13)} onBack={() => scrollTo(11)} n={13}
+      />
+
       <BrochuresSection
-        innerRef={setRef(12)} onNext={() => scrollTo(13)} onBack={() => scrollTo(11)} n={13}
+        innerRef={setRef(13)} onNext={() => scrollTo(14)} onBack={() => scrollTo(12)} n={14}
       />
 
       <ExpansionSection
-        innerRef={setRef(13)} onRestart={() => window.location.reload()} onBack={() => scrollTo(12)} n={14}
+        innerRef={setRef(14)} onRestart={() => window.location.reload()} onBack={() => scrollTo(13)} n={15}
       />
       </div>
     </>

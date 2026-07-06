@@ -315,12 +315,6 @@ html, body, #root {
   opacity: 1;
 }
 
-/* ── Screensaver crossfade ── */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
 /* ── Home quick-nav pills — small button-style links on the cover screen ── */
 .nav-pill {
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
@@ -343,15 +337,3 @@ html, body, #root {
   50%       { transform: scale(0.7); }
 }
 .hint-pinch { display: inline-block; animation: pinchScale 1.5s ease-in-out infinite; }
-
-/* ── Ghost title — huge, pale duplicate sitting behind the real heading ── */
-.ghost-title {
-  position: absolute;
-  white-space: nowrap;
-  font-family: 'BBTorsosPro', sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  user-select: none;
-  pointer-events: none;
-  z-index: 0;
-}
