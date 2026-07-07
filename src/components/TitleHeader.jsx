@@ -23,7 +23,11 @@ export default function TitleHeader({ eyebrow, title, active, dark = false }) {
       )}
       <h2 style={{
         fontFamily: "'BBTorsosPro', sans-serif",
-        fontSize: 'clamp(2.5rem, 6.5vw, 6rem)',
+        // Sized so even the longest title ("Urban Gardening & Wine Fest")
+        // fits on one line — if it wraps to two lines mid-typewriter, the
+        // header grows taller and steals height from the image below it
+        // (both share a fixed-height section via flexbox).
+        fontSize: 'clamp(2.2rem, 4vw, 4.5rem)',
         fontWeight: 700, textTransform: 'uppercase',
         letterSpacing: '0.01em', color: '#a82b39',
         margin: 0, lineHeight: 0.95, minHeight: '1em', position: 'relative',

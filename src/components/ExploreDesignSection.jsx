@@ -5,7 +5,7 @@ import TitleHeader from './TitleHeader'
 import ScrollDownPrompt from './ScrollDownPrompt'
 import SectionIndex from './SectionIndex'
 
-export default function ExploreDesignSection({ innerRef, onNext, onBack, n }) {
+export default function ExploreDesignSection({ innerRef, onNext, onBack, n, attract = false, modelDwellMs = 0 }) {
   const ref = useRef(null)
   const attachRef = el => { ref.current = el; innerRef?.(el) }
   const inView = useInView(ref)
@@ -18,12 +18,23 @@ export default function ExploreDesignSection({ innerRef, onNext, onBack, n }) {
   // render loop when scrolled away — `inView` above never reverts to false.
   const isVisible = useInView(ref, { once: false })
   const [loaded, setLoaded] = useState(false)
+  // In attract mode, re-trigger the auto-zoom-in orbit fresh every time this
+  // slide comes into view (isVisible flips false -> true on every loop of
+  // the tour), instead of only once ever.
+  const zooming = attract && isVisible
 
   return (
     <section ref={attachRef} className="snap-section" style={{ display: 'flex', flexDirection: 'column', background: '#fff' }}>
       <TitleHeader title="Explore Design" active={inView} />
       <div style={{ position: 'relative', flex: '1 1 auto', overflow: 'hidden', background: '#F0EDE5' }}>
-        {shouldLoad && <ThreeDView onLoaded={() => setLoaded(true)} paused={!isVisible} />}
+        {shouldLoad && (
+          <ThreeDView
+            onLoaded={() => setLoaded(true)}
+            paused={!isVisible}
+            interactive={!attract}
+            autoZoomMs={zooming ? modelDwellMs : 0}
+          />
+        )}
         {n && <SectionIndex n={n} />}
         {onBack && <ScrollDownPrompt visible={inView} onClick={onBack} label="Back" icon="↑" position="top" side="left" />}
       </div>

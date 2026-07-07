@@ -68,6 +68,7 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
 
     let theta = Math.PI / 4, phi = Math.PI / 3.5, radius = 50
     let baseRadius = 50
+    let autoZoomDuration = autoZoomMs
     let zoomStartTime = null
     // Set once this effect's cleanup has run (e.g. React StrictMode's
     // dev-only double-mount) so a model load already in flight from a
@@ -130,6 +131,19 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
 
     apiRef.current = {
       setMode: m => { activeCamera = m === 'perspective' ? perspCam : orthoCam },
+      // Kicks off a fresh zoom-in-over-time animation from the fully framed
+      // shot down to a close-up, used by attract mode to replay the effect
+      // every time this slide comes back around.
+      startAutoZoom: ms => {
+        autoZoomDuration = ms
+        zoomStartTime = performance.now()
+        userControlled = false
+      },
+      stopAutoZoom: () => {
+        autoZoomDuration = 0
+        zoomStartTime = null
+        radius = baseRadius
+      },
     }
 
     const loader = new GLTFLoader()
@@ -179,7 +193,7 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
       // level that the pinch/wheel zoom range is measured against.
       zoomExtents()
       baseRadius = radius
-      if (autoZoomMs > 0) zoomStartTime = performance.now()
+      if (autoZoomDuration > 0) zoomStartTime = performance.now()
       setLoading(false)
       if (interactive) {
         setShowHint(true)
@@ -285,8 +299,8 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
       frameId = requestAnimationFrame(animate)
       if (pausedRef.current) return
       if (!userControlled) theta += 0.012
-      if (autoZoomMs > 0 && zoomStartTime !== null) {
-        const t = Math.min(1, (performance.now() - zoomStartTime) / autoZoomMs)
+      if (autoZoomDuration > 0 && zoomStartTime !== null) {
+        const t = Math.min(1, (performance.now() - zoomStartTime) / autoZoomDuration)
         radius = baseRadius * (1 - 0.75 * t)
       }
       updateCamera()
@@ -308,6 +322,17 @@ export default function ThreeDView({ onLoaded, paused = false, interactive = tru
       renderer.dispose()
     }
   }, [])
+
+  // Reacts to autoZoomMs changing after the model's already mounted and
+  // loaded (attract mode toggling it on/off as this slide scrolls in/out of
+  // view), since the render loop above only reads its initial value at
+  // mount. Skipped while still loading — the initial-load path above
+  // handles that case using whatever value was passed in at mount.
+  useEffect(() => {
+    if (loading) return
+    if (autoZoomMs > 0) apiRef.current.startAutoZoom?.(autoZoomMs)
+    else apiRef.current.stopAutoZoom?.()
+  }, [autoZoomMs, loading])
 
   const btnStyle = active => ({
     fontFamily: "'BBTorsosPro', sans-serif",

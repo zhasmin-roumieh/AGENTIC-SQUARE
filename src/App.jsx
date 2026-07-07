@@ -16,14 +16,15 @@ import BrochuresSection from './components/BrochuresSection'
 import ExpansionSection from './components/ExpansionSection'
 
 const BASE = import.meta.env.BASE_URL
-const IDLE_TIMEOUT_MS = 35 * 1000
+const IDLE_TIMEOUT_MS = 20 * 1000
 // Attract mode: once the site's been idle this long, it tours itself as a
 // slideshow — jumping slide to slide with a dwell on each, not a continuous
-// scroll. It dwells longer on the 3D section so the model's auto-rotate has
-// time to show off, then loops back to the cover. Any touch/click/scroll/key
-// press (via useIdle's listeners) cancels it instantly.
-const AUTOSCROLL_DWELL_MS = 7000
-const AUTOSCROLL_MODEL_DWELL_MS = 26000
+// scroll. It dwells longer on the 3D section so the model's auto-zoom-in
+// orbit has time to play out, then loops back to the cover. Any
+// touch/click/scroll/key press (via useIdle's listeners) cancels it
+// instantly.
+const AUTOSCROLL_DWELL_MS = 10 * 1000
+const AUTOSCROLL_MODEL_DWELL_MS = 30 * 1000
 const EXPLORE_DESIGN_INDEX = 9
 
 const STORY_TEXT =
@@ -149,6 +150,7 @@ export default function App() {
 
       <ExploreDesignSection
         innerRef={setRef(9)} onNext={() => scrollTo(10)} onBack={() => scrollTo(8)} n={10}
+        attract={idle} modelDwellMs={AUTOSCROLL_MODEL_DWELL_MS}
       />
 
       <StoryboardSection
