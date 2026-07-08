@@ -27,7 +27,7 @@ export default function TitleHeader({ eyebrow, title, active, dark = false }) {
         // fits on one line — if it wraps to two lines mid-typewriter, the
         // header grows taller and steals height from the image below it
         // (both share a fixed-height section via flexbox).
-        fontSize: 'clamp(2.2rem, 4vw, 4.5rem)',
+        fontSize: 'clamp(2.2rem, 3.2rem, 4.5rem)',
         fontWeight: 700, textTransform: 'uppercase',
         letterSpacing: '0.01em', color: '#a82b39',
         margin: 0, lineHeight: 0.95, minHeight: '1em', position: 'relative',

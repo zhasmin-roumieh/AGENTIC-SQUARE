@@ -37,7 +37,7 @@ export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, 
             right: textPosition === 'left' ? 'auto' : '4rem',
             left: textPosition === 'left' ? '4rem' : 'auto',
             transform: 'translateY(-50%)',
-            width: 'min(440px, 40vw)',
+            width: 'min(440px, 32rem)',
             maxHeight: '80%',
             zIndex: 5,
           }}>

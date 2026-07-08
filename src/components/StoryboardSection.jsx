@@ -17,9 +17,8 @@ export default function StoryboardSection({ innerRef, onNext, onBack, n, text })
       <div style={{ position: 'relative', flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div style={{ position: 'relative', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', background: '#fff' }}>
           <img
-            src={`${import.meta.env.BASE_URL}images/storyboard.webp`}
+            src={`${import.meta.env.BASE_URL}images/storyboard.gif`}
             alt="Design storyboard"
-            loading="lazy"
             style={{
               position: 'absolute', inset: 0,
               width: '100%', height: '100%',

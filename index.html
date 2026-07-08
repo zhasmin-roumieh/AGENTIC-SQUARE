@@ -2,12 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Fixed (non-"device-width") layout width -- tablets/iPads render the
-         exact desktop layout at this width and the browser auto-zooms it
-         to fit the physical screen, instead of reflowing to a narrower
-         mobile-style layout. Keep in sync with the widths the design was
-         tuned against if this ever needs to change. -->
-    <meta name="viewport" content="width=1280, user-scalable=no" />
+    <!-- Standard device-width viewport -- proportional scaling for tablets
+         is handled ourselves below (not by a browser auto-zoom hack, which
+         iPadOS doesn't apply consistently and left content cropped). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <!-- The whole design is sized in rem, tuned against a 1280px-wide
+         desktop. On any narrower screen (tablets), shrink the root font
+         size by the same ratio the screen is narrower than 1280 -- every
+         rem-based size in the app (fonts, padding, layout) scales down
+         together, so the tablet shows the identical desktop layout at a
+         smaller size instead of reflowing or cropping. Never scales above
+         1x, so the actual desktop display is untouched. Runs before first
+         paint to avoid a flash of wrong-sized content. -->
+    <script>
+      (function () {
+        var REFERENCE_WIDTH = 1280
+        function setScale() {
+          var scale = Math.min(1, window.innerWidth / REFERENCE_WIDTH)
+          document.documentElement.style.fontSize = (scale * 16) + 'px'
+        }
+        setScale()
+        window.addEventListener('resize', setScale)
+        window.addEventListener('orientationchange', setScale)
+      })()
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Agentic Square</title>
   </head>

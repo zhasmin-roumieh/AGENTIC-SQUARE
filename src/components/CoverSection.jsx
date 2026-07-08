@@ -5,7 +5,7 @@ import SectionIndex from './SectionIndex'
 
 const titleBase = {
   fontFamily: "'BBTorsosPro', sans-serif",
-  fontSize: 'clamp(3rem, 9.5vw, 11rem)',
+  fontSize: 'clamp(3rem, 7.6rem, 11rem)',
   fontWeight: 400,
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
@@ -48,7 +48,7 @@ export default function CoverSection({ innerRef, onNext, onJump, n }) {
         position: 'absolute', inset: 0,
         backgroundImage: `url(${import.meta.env.BASE_URL}images/PATTERN3.png)`,
         backgroundRepeat: 'repeat',
-        backgroundSize: '20vw auto',
+        backgroundSize: '16rem auto',
         backgroundPosition: '0 0',
         opacity: 0.65,
         animation: 'scrollRight 7s linear infinite',
