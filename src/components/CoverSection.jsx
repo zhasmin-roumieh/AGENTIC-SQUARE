@@ -5,7 +5,7 @@ import SectionIndex from './SectionIndex'
 
 const titleBase = {
   fontFamily: "'BBTorsosPro', sans-serif",
-  fontSize: 'clamp(3rem, 7.6rem, 11rem)',
+  fontSize: 'clamp(3.3rem, 8.4rem, 12rem)',
   fontWeight: 400,
   textTransform: 'uppercase',
   letterSpacing: '0.05em',

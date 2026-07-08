@@ -34,7 +34,7 @@ export default function BrochuresSection({ innerRef, onNext, onBack, n }) {
           flexShrink: 0, margin: 0, padding: '0 4rem 6.5rem',
           textAlign: 'center', maxWidth: '760px', alignSelf: 'center',
           fontFamily: "'BBTorsosPro', sans-serif",
-          fontSize: '0.8rem', lineHeight: 1.6,
+          fontSize: '0.9rem', lineHeight: 1.6,
           color: '#555',
         }}>
           {BROCHURES_NOTE}

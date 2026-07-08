@@ -34,7 +34,7 @@ export default function StoryboardSection({ innerRef, onNext, onBack, n, text })
             flexShrink: 0, margin: 0, padding: '1.1rem 4rem 6.5rem',
             textAlign: 'center', maxWidth: '760px', alignSelf: 'center',
             fontFamily: "'BBTorsosPro', sans-serif",
-            fontSize: '0.8rem', lineHeight: 1.6,
+            fontSize: '0.9rem', lineHeight: 1.6,
             color: '#555',
           }}>
             {text}

@@ -64,8 +64,8 @@ export default function TypewriterSection({ innerRef, text, mode = 'type', onNex
         <p style={{
           fontFamily: "'BBTorsosPro', sans-serif",
           fontSize: mode === 'fade'
-            ? (followUp ? 'clamp(0.75rem, 1rem, 1.05rem)' : 'clamp(0.85rem, 1.2rem, 1.4rem)')
-            : 'clamp(1.1rem, 2.08rem, 2.4rem)',
+            ? (followUp ? 'clamp(0.85rem, 1.13rem, 1.2rem)' : 'clamp(0.95rem, 1.35rem, 1.55rem)')
+            : 'clamp(1.25rem, 2.35rem, 2.7rem)',
           fontWeight: 400,
           color: '#1a1a1a',
           letterSpacing: '0.03em',
@@ -89,7 +89,7 @@ export default function TypewriterSection({ innerRef, text, mode = 'type', onNex
             <div style={{ borderTop: '2px solid #a82b39', width: '3.5rem', margin: '0 auto 1rem' }} />
             <h2 style={{
               fontFamily: "'BBTorsosPro', sans-serif",
-              fontSize: 'clamp(1.4rem, 2.56rem, 2.6rem)',
+              fontSize: 'clamp(1.5rem, 2.9rem, 3rem)',
               fontWeight: 700, textTransform: 'uppercase',
               letterSpacing: '0.02em', color: '#a82b39',
               margin: 0, lineHeight: 0.95,

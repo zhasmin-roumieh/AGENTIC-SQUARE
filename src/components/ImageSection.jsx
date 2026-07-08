@@ -49,7 +49,7 @@ export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, 
               {text.map((p, i) => (
                 <p key={i} style={{
                   fontFamily: "'BBTorsosPro', sans-serif",
-                  fontSize: '0.85rem', lineHeight: 1.65,
+                  fontSize: '0.95rem', lineHeight: 1.65,
                   color: '#1a1a1a', margin: i === 0 ? 0 : '1rem 0 0',
                 }}>
                   {p}

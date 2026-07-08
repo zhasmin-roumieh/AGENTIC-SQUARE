@@ -49,7 +49,7 @@ export default function IntroSection({ innerRef, onNext, onBack, n }) {
       }}>
         <h1 style={{
           fontFamily: "'BBTorsosPro', sans-serif",
-          fontSize: 'clamp(1.8rem, 3.04rem, 5rem)',
+          fontSize: 'clamp(2rem, 3.4rem, 5.4rem)',
           fontWeight: 400,
           color: '#a82b39',
           textTransform: 'uppercase',
@@ -62,7 +62,7 @@ export default function IntroSection({ innerRef, onNext, onBack, n }) {
 
         <p style={{
           fontFamily: "'BBTorsosPro', sans-serif",
-          fontSize: 'clamp(0.75rem, 0.96rem, 1.1rem)',
+          fontSize: 'clamp(0.85rem, 1.08rem, 1.25rem)',
           fontWeight: 600,
           color: '#111',
           letterSpacing: '0.01em',
@@ -76,7 +76,7 @@ export default function IntroSection({ innerRef, onNext, onBack, n }) {
 
         <p style={{
           fontFamily: "'BBTorsosPro', sans-serif",
-          fontSize: 'clamp(0.6rem, 0.72rem, 0.82rem)',
+          fontSize: 'clamp(0.68rem, 0.82rem, 0.94rem)',
           fontWeight: 400,
           color: '#444',
           letterSpacing: '0.01em',
