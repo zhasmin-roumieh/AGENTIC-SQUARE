@@ -13,7 +13,7 @@ export default function BrochuresGrid() {
 
   return (
     <div style={{
-      position: 'absolute', inset: 0,
+      position: 'relative', flex: '1 1 auto', minHeight: 0, width: '100%',
       background: '#F0EDE5',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       gap: '2rem', padding: '4rem',

@@ -16,7 +16,7 @@ export default function BrochuresSection({ innerRef, onNext, onBack, n }) {
   return (
     <section ref={attachRef} className="snap-section" style={{ display: 'flex', flexDirection: 'column', background: '#fff' }}>
       <TitleHeader title="Brochures" active={inView} />
-      <div style={{ position: 'relative', flex: '1 1 auto', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <p style={{
           flexShrink: 0, margin: '1.5rem 0 0', textAlign: 'center',
           fontFamily: "'BBTorsosPro', sans-serif",
@@ -26,9 +26,7 @@ export default function BrochuresSection({ innerRef, onNext, onBack, n }) {
           Tap a brochure to view the full document
         </p>
 
-        <div style={{ position: 'relative', flex: '1 1 auto' }}>
-          <BrochuresGrid />
-        </div>
+        <BrochuresGrid />
 
         <p style={{
           flexShrink: 0, margin: 0, padding: '0 4rem 6.5rem',
