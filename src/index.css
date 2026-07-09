@@ -261,12 +261,23 @@ html, body, #root {
 
 /* ── Brochure thumbnails — full color always (grayscale-on-hover doesn't
    work on touch), with a light tap-feedback on press instead ── */
+.brochure-thumb-btn {
+  max-width: 16.25rem;
+}
 .brochure-thumb-img {
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 .brochure-thumb-btn:active .brochure-thumb-img {
   transform: scale(0.97);
   filter: brightness(0.92);
+}
+
+/* Tablet (narrower than the 1280px desktop reference) shows the
+   thumbnails 25% smaller than the plain proportional scale-down. */
+@media (max-width: 1279px) {
+  .brochure-thumb-btn {
+    max-width: 12.1875rem;
+  }
 }
 
 /* ── Custom cursor (mouse/trackpad only — untouched on touchscreens) ── */
