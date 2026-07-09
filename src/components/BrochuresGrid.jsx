@@ -26,7 +26,7 @@ export default function BrochuresGrid() {
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.8rem',
             background: 'none', border: 'none', padding: 0,
-            cursor: 'pointer', flex: '1 1 0', maxWidth: '260px',
+            cursor: 'pointer', flex: '1 1 0', maxWidth: '16.25rem',
           }}
         >
           <div style={{
