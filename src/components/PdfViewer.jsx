@@ -62,7 +62,7 @@ export default function PdfViewer({ url, title, downloadName, onClose }) {
 
   return (
     <div style={{
-      position: 'absolute', inset: 0, zIndex: 200,
+      position: 'fixed', inset: 0, zIndex: 200,
       background: 'rgba(20,20,20,0.96)',
       display: 'flex', flexDirection: 'column',
     }}>
