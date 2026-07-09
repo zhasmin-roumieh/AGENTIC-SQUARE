@@ -64,11 +64,16 @@ export default function App() {
 
   // Attract-mode slideshow — each slide just appears (an instant cut, no
   // visible scrolling motion), dwelling on each before advancing, with a
-  // longer dwell on the 3D section for its auto-rotate. Loops back to the
-  // cover at the end.
+  // longer dwell on the 3D section for its auto-rotate. Starts touring from
+  // wherever the visitor left off (not the cover) and loops back to the
+  // cover only once it reaches the end. Interrupting it (touch/click/etc.)
+  // just stops the tour in place, on whatever slide it had reached.
   useEffect(() => {
     if (!idle) return
-    let i = 0
+    const start = containerRef.current
+      ? Math.round(containerRef.current.scrollTop / containerRef.current.clientHeight)
+      : 0
+    let i = start
     let timer
     const step = () => {
       refs.current[i]?.scrollIntoView({ behavior: 'instant' })
@@ -78,17 +83,7 @@ export default function App() {
     }
     step()
 
-    return () => {
-      clearTimeout(timer)
-      // Whoever interrupted the tour is a fresh visitor arriving at the
-      // tablet — send them back to a truly fresh cover, same as hitting
-      // Restart. A plain scrollTop reset isn't enough: sections like the
-      // typewriter slides only ever play their type/fade-in once per
-      // mount, so if the tour had already scrolled past them, revisiting
-      // later would show the text stuck in its finished state instead of
-      // replaying. A full reload resets that state along with everything else.
-      window.location.reload()
-    }
+    return () => clearTimeout(timer)
   }, [idle])
 
   return (
