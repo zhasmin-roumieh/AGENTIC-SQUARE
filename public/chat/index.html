@@ -1,0 +1,206 @@
+<!-- vercel-github-link-test -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Agentic Square</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,500;0,600;0,700;1,500&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js" defer></script>
+</head>
+<body>
+  <div id="intro-overlay">
+    <img id="introBg" src="view.png" alt="" aria-hidden="true" />
+
+    <section id="intro-story" class="intro-screen active">
+      <div id="storyBubble" class="story-bubble"></div>
+      <button id="scanQrBtn" class="intro-btn hidden">Enter the WhatsApp Group</button>
+    </section>
+    <section id="intro-name" class="intro-screen">
+      <div class="intro-content">
+        <p class="intro-copy">What should we call you?</p>
+        <div id="nameDisplay" class="name-display" data-placeholder="Type your name"></div>
+        <div id="onscreenKeyboard" class="keyboard"></div>
+        <button id="startBtn" class="intro-btn" disabled>Start</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Runs synchronously, right after #intro-overlay's own markup, so a
+       ?furniture=1 landing (the standalone furniture site's default route)
+       never paints the intro screen at all - main.js's own
+       introOverlay.classList.add("hidden") doesn't run until after
+       stages.json/messages.json/furniture.json have all loaded, which was
+       long enough for the intro's full-bleed "view.png" background to
+       flash on screen first. -->
+  <script>
+    if (new URLSearchParams(location.search).get("furniture") === "1") {
+      document.getElementById("intro-overlay").style.display = "none";
+    }
+  </script>
+
+  <div id="furnitureGallery" class="furniture-gallery">
+    <div class="furniture-frame">
+      <!-- Title and per-item names are baked into the artwork itself now —
+           this element only overlays the tappable AR buttons on top of it.
+           Phone gets its own portrait layout (2 cols x 4 rows, different
+           item order) via the <source>, not just a scaled-down desktop
+           image — button positions below are overridden to match it in the
+           (max-width: 700px) block in styles.css. -->
+      <picture>
+        <source media="(max-width: 700px)" srcset="Furnitures/FINAL%20FURNITURE%20Phone.png">
+        <img src="Furnitures/FINAL%20FURNITURE.png" class="furniture-bg" alt="Furniture pieces" />
+      </picture>
+      <p class="furniture-hint">Touch the icon to view it in AR</p>
+      <button class="furniture-ar-btn" data-idx="0" aria-label="View Pallet Planters in AR"><i class="ti ti-augmented-reality"></i></button>
+      <button class="furniture-ar-btn" data-idx="1" aria-label="View Pallet Seatings in AR"><i class="ti ti-augmented-reality"></i></button>
+      <button class="furniture-ar-btn" data-idx="2" aria-label="View Wooden Benches in AR"><i class="ti ti-augmented-reality"></i></button>
+      <button class="furniture-ar-btn" data-idx="3" aria-label="View Stepped Playground in AR"><i class="ti ti-augmented-reality"></i></button>
+      <button class="furniture-ar-btn" data-idx="4" aria-label="View Table Tennis in AR"><i class="ti ti-augmented-reality"></i></button>
+      <button class="furniture-ar-btn" data-idx="5" aria-label="View Jumping Brickwall in AR"><i class="ti ti-augmented-reality"></i></button>
+      <button class="furniture-ar-btn" data-idx="6" aria-label="View Sand Box in AR"><i class="ti ti-augmented-reality"></i></button>
+      <button class="furniture-ar-btn" data-idx="7" aria-label="View Brick Stand in AR"><i class="ti ti-augmented-reality"></i></button>
+    </div>
+    <button id="furnitureDoneBtn" class="furniture-done-btn hidden">Back to the start page</button>
+  </div>
+
+  <main class="split">
+    <section id="ar-panel">
+      <div id="viewer-root">
+        <p id="loading-message">Loading model…</p>
+      </div>
+      <!-- Story chapter progress (1-6, matching the type:"level" cards) —
+           only shown once the chat story is actually running (see
+           startExperience/resetToIntro), positioned in JS over the AR
+           area's visible (non-phone-occluded) width (positionStoryProgress). -->
+      <div class="story-progress" id="storyProgress">
+        <div class="story-progress-track">
+          <div class="story-progress-fill" id="storyProgressFill"></div>
+        </div>
+        <div class="story-progress-steps">
+          <div class="story-progress-step" data-level="1">1</div>
+          <div class="story-progress-step" data-level="2">2</div>
+          <div class="story-progress-step" data-level="3">3</div>
+          <div class="story-progress-step" data-level="4">4</div>
+          <div class="story-progress-step" data-level="5">5</div>
+          <div class="story-progress-step" data-level="6">6</div>
+        </div>
+      </div>
+      <!-- EXPERIMENTAL (2026-07-10, per Mareike's Betreuer's request, not yet
+           decided on): each level pop-up gets its own cloned instance of this
+           template (see handleLevelPopup in main.js) rather than one reused
+           element — purely passive/informational now (no tap interaction,
+           doesn't pause the story), it just appears in sync with its anchor
+           message and stays pinned in place as the chat keeps scrolling; the
+           next level's card is a separate element tracking its own (lower)
+           anchor row, so both are visible until scrolling carries the new
+           one up far enough to visually cover (and then remove, see
+           pruneCoveredLevelCards) the old one. Kept separate from #arCaption
+           below (the reply-prompt element) because a userPrompt can appear
+           between two levels (e.g. right after Level 1) and would otherwise
+           hijack the same box mid-pin. -->
+      <template id="levelPinTemplate">
+        <div class="ar-caption level-mode">
+          <div class="ar-caption-level">
+            <span class="ar-caption-level-num level-pin-num"></span>
+            <span class="ar-caption-level-title level-pin-title"></span>
+          </div>
+          <p class="ar-caption-text level-pin-text"></p>
+        </div>
+      </template>
+      <div class="ar-caption" id="arCaption">
+        <p class="ar-caption-text" id="arCaptionText"></p>
+        <div class="ar-caption-actions" id="arCaptionActions">
+          <span class="ar-caption-hint">Tap to reply</span>
+          <button class="ar-caption-skip" id="arCaptionSkip">Skip</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="chat-panel" class="phone-wrap">
+      <div class="phone-frame">
+        <div class="screen">
+          <div class="statusbar">
+            <span id="phoneClock">08:00</span>
+            <div class="icons">
+              <i class="ti ti-antenna-bars-5" style="font-size:1em;"></i>
+              <i class="ti ti-wifi" style="font-size:1em;"></i>
+              <i class="ti ti-battery-3" style="font-size:1em;"></i>
+            </div>
+          </div>
+          <div class="waheader">
+            <button id="waBackBtn" class="wa-back-btn" aria-label="Back to the start page"><i class="ti ti-arrow-left" style="font-size:1.3em;"></i></button>
+            <div class="avatar av-icon"><i class="ti ti-messages"></i></div>
+            <div class="meta">
+              <div class="title">Westhagen Marktplatz</div>
+              <div class="sub"><span id="memberCount">1,041 members</span></div>
+            </div>
+            <i class="ti ti-video" style="font-size:1.2em;"></i>
+            <i class="ti ti-phone" style="font-size:1.1em;"></i>
+          </div>
+          <div class="chatbody" id="chatbody"></div>
+          <!-- Shown once the chat story finishes, replacing the old
+               auto-jump into the furniture AR gallery (see the finish
+               sequence in revealNext(), main.js) — this app is also embedded
+               standalone elsewhere as its own AR step, so ending the chat
+               here just offers a restart instead of chaining into it. -->
+          <div class="chat-end" id="chatEnd">
+            <p class="chat-end-text">That's the story — thanks for building with us!</p>
+            <button class="chat-end-restart-btn" id="chatEndRestartBtn">Restart</button>
+          </div>
+          <div class="scroll-hint" id="scrollHint"><i class="ti ti-chevron-down"></i><span>Scroll for more</span></div>
+          <div class="action-toast" id="actionToast">📍 Pointing your camera at the square would show exactly where each piece should be placed</div>
+          <div class="inputbar">
+            <div class="field" id="inputField"><i class="ti ti-mood-smile" style="font-size:1.1em;"></i><div class="field-text-wrap"><span class="field-text">Message</span></div></div>
+            <i class="ti ti-camera" style="font-size:1.3em; color:#54656f; padding:6px;"></i>
+            <i class="ti ti-microphone" style="font-size:1.3em; color:#fff; background:#008069; border-radius:50%; padding:6px;"></i>
+          </div>
+
+          <div class="reply-keyboard" id="replyKeyboard">
+            <div class="reply-field-row">
+              <div id="replyDisplay" class="reply-display" data-placeholder="Type a reply…"></div>
+              <button class="reply-send-btn" id="replySendBtn"><i class="ti ti-send"></i></button>
+            </div>
+            <div class="keyboard compact" id="replyKeyboardKeys"></div>
+            <div class="choice-options" id="replyChoices"></div>
+          </div>
+
+          <div id="imageLightbox" class="image-lightbox hidden">
+            <img id="imageLightboxImg" src="" alt="" />
+            <button id="imageLightboxClose" class="image-lightbox-close" aria-label="Close image">✕</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- AR-only, never shown inline — one per furniture piece, created and
+       given its src/ios-src lazily once the furniture gallery is actually
+       reached (see buildFurnitureArViewers/showFurnitureGallery in main.js),
+       not at page load and not at click time either. A click just calls
+       .activateAR() on the matching one
+       with no attribute changes of its own, avoiding a same-tap race where
+       model-viewer's internal AR-readiness state hasn't caught up yet to a
+       src/ios-src set in that same click (which needed two taps: one to
+       set the attributes, a second for the now-updated state to actually
+       let activateAR() launch anything). Kept off-screen rather than
+       display:none since some browsers won't run WebXR/AR activation on a
+       non-rendered element. -->
+  <div id="furnitureArViewers"></div>
+
+  <!-- Idle "attract mode" overlay — shown after SCREENSAVER_IDLE_MS of no
+       touch anywhere in the app (see the idle-screensaver block in main.js),
+       covering whatever screen is currently up (intro, mid-chat, AR,
+       furniture gallery). A single tap anywhere on it resets the whole
+       kiosk back to the very first screen, on the assumption that a visitor
+       who let it go idle has walked away. -->
+  <div id="screensaver" class="screensaver">
+    <p class="screensaver-text">Touch to interact</p>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

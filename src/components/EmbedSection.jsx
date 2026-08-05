@@ -16,11 +16,15 @@ function useIsTouchDevice() {
   return isTouch
 }
 
-export default function EmbedSection({ innerRef, eyebrow, title, url, arNotice, onNext, onBack, n }) {
+export default function EmbedSection({ innerRef, eyebrow, title, url, arNotice, allowRestart, onNext, onBack, n }) {
   const ref = useRef(null)
   const attachRef = el => { ref.current = el; innerRef?.(el) }
   const inView = useInView(ref)
   const isTouch = useIsTouchDevice()
+  // Bumping this remounts the iframe, giving it a fresh session — the
+  // embedded app is a different origin, so this is the only way to "restart"
+  // it (we can't reach into its state or know when a chat has finished).
+  const [restartKey, setRestartKey] = useState(0)
 
   return (
     <section ref={attachRef} className="snap-section" style={{
@@ -44,11 +48,32 @@ export default function EmbedSection({ innerRef, eyebrow, title, url, arNotice, 
             we're not running two live 3D/AR sites' worth of WebGL at once. */}
         {inView && (
           <iframe
+            key={restartKey}
             src={url}
             title={title}
             allow="xr-spatial-tracking; camera; accelerometer; gyroscope; magnetometer"
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
           />
+        )}
+
+        {allowRestart && (
+          <button
+            onClick={() => setRestartKey(k => k + 1)}
+            data-cursor-hover
+            style={{
+              position: 'absolute', top: '1.2rem', left: '1.2rem', zIndex: 20,
+              display: 'flex', alignItems: 'center', gap: '0.4rem',
+              background: 'rgba(20,20,20,0.75)', border: 'none', borderRadius: '100px',
+              color: '#fff', cursor: 'pointer',
+              fontFamily: "'BBTorsosPro', sans-serif",
+              fontSize: '0.7rem', fontWeight: 600,
+              letterSpacing: '0.15em', textTransform: 'uppercase',
+              padding: '0.6rem 1.1rem',
+            }}
+          >
+            <span style={{ fontSize: '1rem', lineHeight: 1 }}>↻</span>
+            <span>Restart Chat</span>
+          </button>
         )}
 
         {n && <SectionIndex n={n} />}
