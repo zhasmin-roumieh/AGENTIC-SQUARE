@@ -454,8 +454,11 @@ function activateFurnitureAR(idx) {
     }
   }
   // Back-to-start stays hidden (see showFurnitureGallery) until the visitor
-  // has tried AR on at least one piece — reveal it the moment they do.
-  furnitureDoneBtn.classList.remove("hidden");
+  // has tried AR on at least one piece — reveal it the moment they do. Gated
+  // on canActivateAR (same check watchArAvailability uses) so a desktop
+  // visitor tapping the icon — where AR silently can't launch at all — never
+  // sees a "back to start" bar appear as if something had happened.
+  if (el?.canActivateAR) furnitureDoneBtn.classList.remove("hidden");
 }
 
 // Restarts the "nobody's touched this screen in a while" timer — called on

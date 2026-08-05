@@ -53,6 +53,12 @@ export default function App() {
   const containerRef = useRef(null)
   const setRef = i => el => { refs.current[i] = el }
   const scrollTo = i => refs.current[i]?.scrollIntoView({ behavior: 'smooth' })
+  // Cover's quick-link menu jumps far ahead (e.g. straight to AR Visualization
+  // from the very first slide) — a smooth scroll would animate past every
+  // slide in between, briefly showing each one (including mounting an
+  // EmbedSection's iframe if it crosses the 50% inView threshold along the
+  // way) before arriving. An instant jump skips straight there instead.
+  const jumpTo = i => refs.current[i]?.scrollIntoView({ behavior: 'instant' })
   const progress = useScrollContainerProgress()
   const idle = useIdle(IDLE_TIMEOUT_MS)
 
@@ -94,7 +100,7 @@ export default function App() {
       <ScrollProgressRail progress={progress} />
       {progress > 0.01 && <RestartButton />}
       <div className="scroll-container" ref={containerRef}>
-      <CoverSection innerRef={setRef(0)} onNext={() => scrollTo(1)} onJump={scrollTo} n={1} />
+      <CoverSection innerRef={setRef(0)} onNext={() => scrollTo(1)} onJump={jumpTo} n={1} />
 
       <IntroSection
         innerRef={setRef(1)} onNext={() => scrollTo(2)} onBack={() => scrollTo(0)} n={2}
