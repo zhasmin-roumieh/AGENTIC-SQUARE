@@ -91,6 +91,17 @@ function isIOS() {
   );
 }
 
+// AR only ever launches on phones/tablets — mirrors the same check the outer
+// site uses for its "AR only works on a phone or tablet" banner. Deliberately
+// not relying on model-viewer's own canActivateAR here: on some desktop
+// browsers it can resolve truthy (WebXR device API present, immersive-ar
+// support not actually confirmed yet) even though nothing will ever launch,
+// which is exactly what let the furniture gallery's "back to start" bar
+// wrongly reveal itself on a laptop AR click.
+function isTouchDevice() {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
+
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -455,10 +466,10 @@ function activateFurnitureAR(idx) {
   }
   // Back-to-start stays hidden (see showFurnitureGallery) until the visitor
   // has tried AR on at least one piece — reveal it the moment they do. Gated
-  // on canActivateAR (same check watchArAvailability uses) so a desktop
-  // visitor tapping the icon — where AR silently can't launch at all — never
-  // sees a "back to start" bar appear as if something had happened.
-  if (el?.canActivateAR) furnitureDoneBtn.classList.remove("hidden");
+  // on isTouchDevice() (not canActivateAR — see its comment) so a desktop/
+  // laptop visitor tapping the icon, where AR silently can't launch at all,
+  // never sees a "back to start" bar appear as if something had happened.
+  if (isTouchDevice()) furnitureDoneBtn.classList.remove("hidden");
 }
 
 // Restarts the "nobody's touched this screen in a while" timer — called on
