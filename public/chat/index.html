@@ -47,19 +47,6 @@
     </section>
   </div>
 
-  <!-- Runs synchronously, right after #intro-overlay's own markup, so a
-       ?furniture=1 landing (the standalone furniture site's default route)
-       never paints the intro screen at all - main.js's own
-       introOverlay.classList.add("hidden") doesn't run until after
-       stages.json/messages.json/furniture.json have all loaded, which was
-       long enough for the intro's full-bleed "view.png" background to
-       flash on screen first. -->
-  <script>
-    if (new URLSearchParams(location.search).get("furniture") === "1") {
-      document.getElementById("intro-overlay").style.display = "none";
-    }
-  </script>
-
   <div id="furnitureGallery" class="furniture-gallery">
     <div class="furniture-frame">
       <!-- Title and per-item names are baked into the artwork itself now —
@@ -84,6 +71,34 @@
     </div>
     <button id="furnitureDoneBtn" class="furniture-done-btn hidden">Back to the start page</button>
   </div>
+
+  <!-- Runs synchronously, right after both #intro-overlay and #furnitureGallery
+       exist in the DOM, so a ?furniture=1 landing (the standalone furniture
+       site's default route, also what the main site's AR Visualization slide
+       loads in its iframe) goes straight to the gallery with no flash of the
+       chat/3D view underneath. main.js's own showFurnitureGallery() call
+       doesn't run until after stages.json/messages.json/furniture.json have
+       all loaded over the network — long enough for <main class="split">
+       (the chat/AR story view, otherwise unhidden) to paint first. This does
+       the same "active" toggle main.js's showFurnitureGallery() does, just
+       immediately; main.js still runs its own copy right after, harmlessly
+       re-applying the same class once the real furniture data (needed for
+       the AR buttons to actually work, not just to be visible) is ready. -->
+  <script>
+    if (new URLSearchParams(location.search).get("furniture") === "1") {
+      document.getElementById("intro-overlay").style.display = "none";
+      const gallery = document.getElementById("furnitureGallery");
+      // .furniture-gallery's CSS opacity/visibility transition (styles.css)
+      // is meant for the *normal* mid-session show/hide (e.g. tapping Done),
+      // not this very-first-paint activation — force it off for this one
+      // change only, so there's no faint half-second cross-fade of the
+      // chat/3D view bleeding through underneath while it plays out.
+      gallery.style.transition = "none";
+      gallery.classList.add("active");
+      void gallery.offsetHeight;
+      gallery.style.transition = "";
+    }
+  </script>
 
   <main class="split">
     <section id="ar-panel">
