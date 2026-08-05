@@ -54,7 +54,7 @@ export default function BrochuresGrid() {
 
       {openBrochure && (
         <PdfViewer
-          url={`${import.meta.env.BASE_URL}brochures/${openBrochure.pdf}`}
+          url={`${import.meta.env.BASE_URL}materials/${openBrochure.pdf}`}
           title={openBrochure.label}
           downloadName={`${openBrochure.label}.pdf`}
           onClose={() => setOpenBrochure(null)}
