@@ -764,6 +764,23 @@ model-viewer {
   100% { transform: scale(1.9); opacity: 0; }
 }
 
+/* Tapped, waiting on AR to actually launch (see activateFurnitureAR) — pause
+   the "come tap me" pulse (misleading once it's already been tapped) and
+   spin the icon itself instead, so a visitor sees *something* respond
+   immediately rather than a silent multi-second gap that reads as broken. */
+.furniture-ar-btn.ar-loading::after {
+  animation-play-state: paused;
+  opacity: 0;
+}
+
+.furniture-ar-btn.ar-loading i {
+  animation: furniture-ar-spin 0.9s linear infinite;
+}
+
+@keyframes furniture-ar-spin {
+  100% { transform: rotate(360deg); }
+}
+
 .furniture-ar-btn[data-idx="0"] { left: 11.3%; top: 29%; }
 .furniture-ar-btn[data-idx="1"] { left: 36%;   top: 29%; }
 .furniture-ar-btn[data-idx="2"] { left: 66%;   top: 29%; }

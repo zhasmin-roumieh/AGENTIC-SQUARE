@@ -198,7 +198,7 @@ function buildFurnitureArViewers() {
   if (furnitureViewersBuilt) return;
   furnitureViewersBuilt = true;
   furnitureArViewers.innerHTML = "";
-  FURNITURE.forEach((item) => {
+  FURNITURE.forEach((item, idx) => {
     const el = document.createElement("model-viewer");
     el.className = "furniture-ar-viewer";
     el.setAttribute("ar", "");
@@ -230,6 +230,13 @@ function buildFurnitureArViewers() {
     el.addEventListener("ar-status", (event) => {
       if (event.detail.status === "session-started") {
         furnitureDoneBtn.classList.remove("hidden");
+      }
+      // Any of these mean the wait is over, one way or another — clear the
+      // tapped icon's loading spinner (see activateFurnitureAR) regardless
+      // of which one fired.
+      if (["session-started", "object-placed", "failed", "not-presenting"].includes(event.detail.status)) {
+        const btn = document.querySelector(`.furniture-ar-btn[data-idx="${idx}"]`);
+        btn?.classList.remove("ar-loading");
       }
     });
     furnitureArViewers.appendChild(el);
@@ -438,6 +445,16 @@ waBackBtn.addEventListener("click", resetToIntro);
 // AR-readiness state hadn't caught up to the same-tick attribute change).
 function activateFurnitureAR(idx) {
   const el = furnitureArViewers.children[idx];
+  // Real AR startup (network fetch, Draco decode, then the camera/ARCore
+  // session itself booting up) can take a few visible seconds with nothing
+  // else on screen changing — this spinner (see .furniture-ar-btn.loading in
+  // styles.css) is purely so a tap reads as "working on it" instead of
+  // "did that do anything?". Cleared by the ar-status listener in
+  // buildFurnitureArViewers once AR actually resolves one way or another,
+  // with this timeout as a backstop in case ar-status never fires at all.
+  const btn = document.querySelector(`.furniture-ar-btn[data-idx="${idx}"]`);
+  btn?.classList.add("ar-loading");
+  setTimeout(() => btn?.classList.remove("ar-loading"), 8000);
   if (el) {
     // .loaded is safe to check directly here (unlike the square viewer's
     // own AR button, see createViewer) since this viewer's src is fixed
