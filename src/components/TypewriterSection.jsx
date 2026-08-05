@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import useInView from '../hooks/useInView'
-import useScrollProgress from '../hooks/useScrollProgress'
-import { titleMotion } from '../hooks/scrollMotion'
 import ScrollDownPrompt from './ScrollDownPrompt'
 import SectionIndex from './SectionIndex'
 
-export default function TypewriterSection({ innerRef, text, mode = 'type', onNext, onBack, n, followUp }) {
+export default function TypewriterSection({ innerRef, text, mode = 'type', onNext, onBack, n }) {
   const ref = useRef(null)
   const attachRef = el => { ref.current = el; innerRef?.(el) }
   const inView = useInView(ref)
-  const progress = useScrollProgress(ref)
-  const motion = titleMotion(progress, 40)
 
   const [displayText, setDisplayText] = useState(mode === 'fade' ? text : '')
   const [visible, setVisible] = useState(mode !== 'fade')
@@ -64,7 +60,7 @@ export default function TypewriterSection({ innerRef, text, mode = 'type', onNex
         <p style={{
           fontFamily: "'BBTorsosPro', sans-serif",
           fontSize: mode === 'fade'
-            ? (followUp ? 'clamp(0.85rem, 1.13rem, 1.2rem)' : 'clamp(0.95rem, 1.35rem, 1.55rem)')
+            ? 'clamp(0.95rem, 1.35rem, 1.55rem)'
             : 'clamp(1.25rem, 2.35rem, 2.7rem)',
           fontWeight: 400,
           color: '#1a1a1a',
@@ -78,46 +74,6 @@ export default function TypewriterSection({ innerRef, text, mode = 'type', onNex
           {displayText}
           {mode === 'type' && !done && <span className="cursor" style={{ background: '#1a1a1a' }} />}
         </p>
-
-        {followUp && (
-          <div style={{
-            marginTop: '1.6rem',
-            opacity: done ? motion.opacity : 0,
-            transform: motion.transform,
-            transition: 'opacity 0.8s ease',
-          }}>
-            <div style={{ borderTop: '2px solid #a82b39', width: '3.5rem', margin: '0 auto 1rem' }} />
-            <h2 style={{
-              fontFamily: "'BBTorsosPro', sans-serif",
-              fontSize: 'clamp(1.5rem, 2.9rem, 3rem)',
-              fontWeight: 700, textTransform: 'uppercase',
-              letterSpacing: '0.02em', color: '#a82b39',
-              margin: 0, lineHeight: 0.95,
-            }}>
-              {followUp.title}
-            </h2>
-            {followUp.qr && (
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.9rem',
-                marginTop: '1.1rem', padding: '0.8rem 1.1rem',
-                background: 'rgba(255,255,255,0.6)', borderRadius: '14px',
-              }}>
-                <img
-                  src={followUp.qr}
-                  alt="QR code linking to the Agentic Square website"
-                  style={{ width: '64px', height: '64px', flexShrink: 0 }}
-                />
-                <p style={{
-                  fontFamily: "'BBTorsosPro', sans-serif",
-                  fontSize: '0.75rem', lineHeight: 1.4, textAlign: 'left',
-                  color: '#1a1a1a', margin: 0, maxWidth: '150px',
-                }}>
-                  View it on the tablet in the room
-                </p>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {n && <SectionIndex n={n} />}

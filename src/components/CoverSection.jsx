@@ -21,12 +21,13 @@ const names = ['Zhasmin Roumieh', 'Mareike Sophie Steffen', 'Dikshya Pokharel']
 // everything — indices must match the section order set up in App.jsx.
 const quickLinks = [
   { label: 'Marktplatz', index: 5 },
-  { label: 'Interactive Chat', index: 7 },
-  { label: 'Manual', index: 8 },
-  { label: 'Explore 3D', index: 9 },
-  { label: 'Storyboard', index: 10 },
-  { label: 'Scenarios', index: 11 },
-  { label: 'Brochures', index: 13 },
+  { label: 'Interactive Chat', index: 8 },
+  { label: 'AR Visualization', index: 9 },
+  { label: 'Manual', index: 10 },
+  { label: 'Explore 3D', index: 11 },
+  { label: 'Storyboard', index: 12 },
+  { label: 'Scenarios', index: 13 },
+  { label: 'Brochures', index: 15 },
 ]
 
 export default function CoverSection({ innerRef, onNext, onJump, n }) {

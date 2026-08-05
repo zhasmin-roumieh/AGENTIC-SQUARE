@@ -8,6 +8,7 @@ import RestartButton from './components/RestartButton'
 import CoverSection from './components/CoverSection'
 import IntroSection from './components/IntroSection'
 import TypewriterSection from './components/TypewriterSection'
+import EmbedSection from './components/EmbedSection'
 import ImageSection from './components/ImageSection'
 import ExploreDesignSection from './components/ExploreDesignSection'
 import StoryboardSection from './components/StoryboardSection'
@@ -25,7 +26,7 @@ const IDLE_TIMEOUT_MS = 20 * 1000
 // instantly.
 const AUTOSCROLL_DWELL_MS = 10 * 1000
 const AUTOSCROLL_MODEL_DWELL_MS = 30 * 1000
-const EXPLORE_DESIGN_INDEX = 9
+const EXPLORE_DESIGN_INDEX = 11
 
 const STORY_TEXT =
   'We all know public spaces are very important places of encounter and social interactions. Cities that grow organically grow their public spaces alongside their communities. But in this district of Wolfsburg, Westhagen this has been difficult.'
@@ -130,48 +131,56 @@ export default function App() {
 
       <TypewriterSection
         innerRef={setRef(7)} mode="fade" text={AIM_TEXT}
-        followUp={{
-          title: 'Interactive Chat',
-          qr: `${BASE}images/qr-agentic-square.png`,
-        }}
         onNext={() => scrollTo(8)} onBack={() => scrollTo(6)} n={8}
       />
 
-      <ImageSection
-        innerRef={setRef(8)} src={`${BASE}images/manual.png`} alt="Assembly manual"
-        title="Manual" fit="contain"
+      <EmbedSection
+        innerRef={setRef(8)} title="Interactive Chat"
+        url="https://agentic-square.vercel.app/"
         onNext={() => scrollTo(9)} onBack={() => scrollTo(7)} n={9}
       />
 
+      <EmbedSection
+        innerRef={setRef(9)} title="AR Visualization"
+        url="https://agentic-square-furniture.vercel.app/" arNotice
+        onNext={() => scrollTo(10)} onBack={() => scrollTo(8)} n={10}
+      />
+
+      <ImageSection
+        innerRef={setRef(10)} src={`${BASE}images/manual.png`} alt="Assembly manual"
+        title="Manual" fit="contain"
+        onNext={() => scrollTo(11)} onBack={() => scrollTo(9)} n={11}
+      />
+
       <ExploreDesignSection
-        innerRef={setRef(9)} onNext={() => scrollTo(10)} onBack={() => scrollTo(8)} n={10}
+        innerRef={setRef(11)} onNext={() => scrollTo(12)} onBack={() => scrollTo(10)} n={12}
         attract={idle} modelDwellMs={AUTOSCROLL_MODEL_DWELL_MS}
       />
 
       <StoryboardSection
-        innerRef={setRef(10)} text={STORYBOARD_TEXT}
-        onNext={() => scrollTo(11)} onBack={() => scrollTo(9)} n={11}
-      />
-
-      <ImageSection
-        innerRef={setRef(11)} src={`${BASE}images/comparisons/westhagen-plays.webp`} alt="Westhagen Plays"
-        eyebrow="Design Scenarios" title="Westhagen Plays" fit="contain"
-        onNext={() => scrollTo(12)} onBack={() => scrollTo(10)} n={12}
-      />
-
-      <CompareSliderSection
-        innerRef={setRef(12)} eyebrow="Design Scenarios" title="Urban Gardening & Wine Fest"
-        imageA={`${BASE}images/comparisons/urban-gardening.webp`} labelA="Urban Gardening"
-        imageB={`${BASE}images/comparisons/wine-fest.webp`} labelB="Wine Fest"
+        innerRef={setRef(12)} text={STORYBOARD_TEXT}
         onNext={() => scrollTo(13)} onBack={() => scrollTo(11)} n={13}
       />
 
+      <ImageSection
+        innerRef={setRef(13)} src={`${BASE}images/comparisons/westhagen-plays.webp`} alt="Westhagen Plays"
+        eyebrow="Design Scenarios" title="Westhagen Plays" fit="contain"
+        onNext={() => scrollTo(14)} onBack={() => scrollTo(12)} n={14}
+      />
+
+      <CompareSliderSection
+        innerRef={setRef(14)} eyebrow="Design Scenarios" title="Urban Gardening & Wine Fest"
+        imageA={`${BASE}images/comparisons/urban-gardening.webp`} labelA="Urban Gardening"
+        imageB={`${BASE}images/comparisons/wine-fest.webp`} labelB="Wine Fest"
+        onNext={() => scrollTo(15)} onBack={() => scrollTo(13)} n={15}
+      />
+
       <BrochuresSection
-        innerRef={setRef(13)} onNext={() => scrollTo(14)} onBack={() => scrollTo(12)} n={14}
+        innerRef={setRef(15)} onNext={() => scrollTo(16)} onBack={() => scrollTo(14)} n={16}
       />
 
       <ExpansionSection
-        innerRef={setRef(14)} onRestart={() => window.location.reload()} onBack={() => scrollTo(13)} n={15}
+        innerRef={setRef(16)} onRestart={() => window.location.reload()} onBack={() => scrollTo(15)} n={17}
       />
       </div>
     </>
