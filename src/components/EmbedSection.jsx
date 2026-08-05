@@ -43,7 +43,11 @@ export default function EmbedSection({ innerRef, eyebrow, title, url, arNotice, 
         </div>
       )}
 
-      <div style={{ position: 'relative', flex: '1 1 auto', overflow: 'hidden', background: '#111' }}>
+      {/* Background matches the chat app's own furniture-gallery/ar-panel
+          background (see public/chat/styles.css) rather than black, so the
+          brief gap before the iframe's own document has painted anything
+          reads as "still loading" instead of a flash of black screen. */}
+      <div style={{ position: 'relative', flex: '1 1 auto', overflow: 'hidden', background: '#eef1ef' }}>
         {/* Only mount the iframe once this slide has actually been seen, so
             we're not running two live 3D/AR sites' worth of WebGL at once. */}
         {inView && (
