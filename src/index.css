@@ -1,35 +1,37 @@
 /* ── BB Torsos Pro font faces ──
-   Paths are prefixed with /AGENTIC-SQUARE/ to match the GitHub Pages repo
-   name — CSS can't read the Vite base config, so keep this in sync with
-   the `base` value in vite.config.js if the repo is ever renamed. */
+   Root-absolute (/fonts/...), NOT hardcoded to /AGENTIC-SQUARE/ — Vite
+   rewrites any plain /-rooted url() in CSS it processes to match whatever
+   `base` is set to in vite.config.js (same mechanism it uses for HTML asset
+   paths), so this needs no manual sync and survives the repo being renamed,
+   moved, or served from a different host entirely. */
 @font-face {
   font-family: 'BBTorsosPro';
-  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-thin.ttf') format('truetype');
+  src: url('/fonts/bbtorsospro-thin.ttf') format('truetype');
   font-weight: 100;
 }
 @font-face {
   font-family: 'BBTorsosPro';
-  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-light.ttf') format('truetype');
+  src: url('/fonts/bbtorsospro-light.ttf') format('truetype');
   font-weight: 300;
 }
 @font-face {
   font-family: 'BBTorsosPro';
-  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-regular.ttf') format('truetype');
+  src: url('/fonts/bbtorsospro-regular.ttf') format('truetype');
   font-weight: 400;
 }
 @font-face {
   font-family: 'BBTorsosPro';
-  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-medium.ttf') format('truetype');
+  src: url('/fonts/bbtorsospro-medium.ttf') format('truetype');
   font-weight: 500;
 }
 @font-face {
   font-family: 'BBTorsosPro';
-  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-semibold.ttf') format('truetype');
+  src: url('/fonts/bbtorsospro-semibold.ttf') format('truetype');
   font-weight: 600;
 }
 @font-face {
   font-family: 'BBTorsosPro';
-  src: url('/AGENTIC-SQUARE/fonts/bbtorsospro-bold.ttf') format('truetype');
+  src: url('/fonts/bbtorsospro-bold.ttf') format('truetype');
   font-weight: 700;
 }
 
