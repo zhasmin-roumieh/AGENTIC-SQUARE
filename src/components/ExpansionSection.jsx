@@ -17,9 +17,10 @@ export default function ExpansionSection({ innerRef, onRestart, onBack, n }) {
       <TitleHeader title="Expansion" active={inView} />
       <div style={{ position: 'relative', flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div style={{ position: 'relative', flex: '1 1 auto', minHeight: 0, overflow: 'hidden' }}>
-          <img
-            src={`${import.meta.env.BASE_URL}images/spread.gif`}
-            alt="Expansion"
+          <video
+            src={`${import.meta.env.BASE_URL}images/spread.mp4`}
+            autoPlay loop muted playsInline
+            aria-label="Expansion"
             className={`reveal-img${inView ? ' is-in' : ''}`}
             style={{
               position: 'absolute', inset: 0,
