@@ -20,7 +20,7 @@ function useMagnetic(centered) {
   return { ref, onMouseMove, onMouseLeave, base }
 }
 
-export default function ScrollDownPrompt({ visible, onClick, label = 'NEXT', icon = '↓', position = 'bottom', side = 'right' }) {
+export default function ScrollDownPrompt({ visible, onClick, label = 'NEXT', icon = '↓', position = 'bottom', side = 'right', style }) {
   const magnetic = useMagnetic(position === 'bottom')
 
   return (
@@ -47,6 +47,7 @@ export default function ScrollDownPrompt({ visible, onClick, label = 'NEXT', ico
         letterSpacing: '0.2em', textTransform: 'uppercase',
         zIndex: 10, padding: '0.7rem 1.2rem',
         transition: 'transform 0.15s ease-out, color 0.2s ease',
+        ...style,
       }}
     >
       <span>{label}</span>

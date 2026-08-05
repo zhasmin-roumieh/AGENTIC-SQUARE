@@ -97,7 +97,7 @@ model-viewer {
   cursor: pointer;
   position: absolute;
   bottom: 24px;
-  left: 24px;
+  right: 24px;
 }
 
 /* Hidden while an AR session is actually active (see the ar-status listener
@@ -134,7 +134,7 @@ model-viewer {
 #qr-fallback {
   position: absolute;
   bottom: 24px;
-  left: 24px;
+  right: 24px;
   background: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 8px;

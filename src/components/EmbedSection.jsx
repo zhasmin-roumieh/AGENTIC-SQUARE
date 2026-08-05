@@ -77,7 +77,16 @@ export default function EmbedSection({ innerRef, eyebrow, title, url, arNotice, 
         )}
 
         {n && <SectionIndex n={n} />}
-        {onBack && <ScrollDownPrompt visible={inView} onClick={onBack} label="Back" icon="↑" position="top" />}
+        {onBack && (
+          <ScrollDownPrompt
+            visible={inView} onClick={onBack} label="Back" icon="↑" position="top"
+            // The chat app anchors its own phone mockup to the top-right
+            // corner, right where Back normally sits — move Back to the
+            // left (stacked under Restart Chat) whenever that's on screen.
+            side={allowRestart ? 'left' : 'right'}
+            style={allowRestart ? { top: '3.6rem' } : undefined}
+          />
+        )}
       </div>
 
       {onNext && <ScrollDownPrompt visible={inView} onClick={onNext} />}
