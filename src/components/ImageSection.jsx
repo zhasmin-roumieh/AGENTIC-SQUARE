@@ -4,7 +4,7 @@ import ScrollDownPrompt from './ScrollDownPrompt'
 import SectionIndex from './SectionIndex'
 import TitleHeader from './TitleHeader'
 
-export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, text, textPosition = 'none', fit = 'cover', onNext, onBack, n }) {
+export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, text, textPosition = 'none', fit = 'cover', onNext, onBack, n, downloadUrl, downloadLabel = 'Download Poster (PDF)' }) {
   const ref = useRef(null)
   const attachRef = el => { ref.current = el; innerRef?.(el) }
   const inView = useInView(ref)
@@ -61,6 +61,28 @@ export default function ImageSection({ innerRef, src, alt = '', eyebrow, title, 
 
         {n && <SectionIndex n={n} dark={!isContain} />}
         {onBack && <ScrollDownPrompt visible={inView} onClick={onBack} label="Back" icon="↑" position="top" />}
+
+        {downloadUrl && (
+          <a
+            href={downloadUrl}
+            download
+            data-cursor-hover
+            style={{
+              position: 'absolute', bottom: '2.5rem', left: '2.5rem', zIndex: 10,
+              display: 'flex', alignItems: 'center', gap: '0.5rem',
+              background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(6px)',
+              border: 'none', borderRadius: '100px', padding: '0.6rem 1.2rem',
+              textDecoration: 'none', cursor: 'pointer',
+              fontFamily: "'BBTorsosPro', sans-serif",
+              fontSize: '0.65rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: '#1a1a1a',
+            }}
+          >
+            <span style={{ fontSize: '0.9rem', lineHeight: 1 }}>↓</span>
+            <span>{downloadLabel}</span>
+          </a>
+        )}
       </div>
 
       {onNext && <ScrollDownPrompt visible={inView} onClick={onNext} />}

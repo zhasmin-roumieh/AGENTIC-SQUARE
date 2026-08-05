@@ -165,6 +165,7 @@ export default function App() {
       <ImageSection
         innerRef={setRef(12)} src={`${BASE}images/comparisons/westhagen-plays.webp`} alt="Westhagen Plays"
         eyebrow="Design Scenarios" title="Westhagen Plays" fit="contain"
+        downloadUrl={`${BASE}materials/westhagen-plays.pdf`}
         onNext={() => scrollTo(13)} onBack={() => scrollTo(11)} n={13}
       />
 
@@ -172,6 +173,8 @@ export default function App() {
         innerRef={setRef(13)} eyebrow="Design Scenarios" title="Urban Gardening & Wine Fest"
         imageA={`${BASE}images/comparisons/urban-gardening.webp`} labelA="Urban Gardening"
         imageB={`${BASE}images/comparisons/wine-fest.webp`} labelB="Wine Fest"
+        downloadA={`${BASE}materials/urban-gardening.pdf`}
+        downloadB={`${BASE}materials/wine-fest.pdf`}
         onNext={() => scrollTo(14)} onBack={() => scrollTo(12)} n={14}
       />
 
