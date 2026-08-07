@@ -3,12 +3,12 @@
 Prompt City. Urban Vision Wolfsburg 2026 — Design studio SoSe 2026
 Bauhaus-Universität Weimar, InfAU
 
-**Team:** Dikshya Pokharel, Mareike Sophie Steffan, Zhasmin Roumieh
+**Team:** Dikshya Pokharel, Mareike Sophie Steffen, Zhasmin Roumieh
 **Contact:** zhasminroumieh@gmail.com
 
 ## Abstract
 
-Agentic Square responds to the erosion of everyday social life in car-oriented neighbourhoods of Wolfsburg, taking as its test site the underused Marktplatz of Westhagen. The premise is that community forms through building things together: residents come to know one another by designing and constructing public space as a group, season after season. As Artificial intelligence becomes widely available, the project experiments with placing it in the square itself as a digital assistant that coordinates this collective process. The assistant gathers residents' wishes, proposes layouts, produces print-ready plans and step by step build manuals that require no specialist skills, handles city permits, divides the work into sign-up tasks and also handles the dismantling process. The same low-cost pallets and bricks are reconfigured from season to season into a bench, a planter, a playground or a festival stand. The assistant provides the workflow, and the residents build and decide together.
+Agentic Square responds to the erosion of everyday social life in car-oriented neighbourhoods of Wolfsburg, taking as its test site the underused Marktplatz of Westhagen. The premise is that community forms through building things together: residents come to know one another by designing and constructing public space as a group, season after season. As artificial intelligence becomes widely available, the project experiments with placing it in the square itself as a digital assistant that coordinates this collective process. The assistant gathers residents' wishes, proposes layouts, produces print-ready plans and step-by-step building manuals that require no specialist skills, handles city permits, divides the work into sign-up tasks and also handles the dismantling process. The same low-cost pallets and bricks are reconfigured from season to season into a bench, a planter, a playground or a festival stand. The assistant provides the workflow, the residents build and decide together.
 
 ## The urban issue
 
