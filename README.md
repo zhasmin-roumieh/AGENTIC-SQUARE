@@ -4,9 +4,7 @@ An interactive web presentation for the Agentic Square studio project, featuring
 
 ## Live site
 
-https://zhasmin-roumieh.github.io/AGENTIC-SQUARE/
-
-Deployed automatically by GitHub Actions every time changes are pushed to `main`.
+Deployed automatically by GitHub Actions every time changes are pushed to `main`, at whatever GitHub Pages URL is configured for this repo (Settings → Pages).
 
 ## Tech stack
 
@@ -41,6 +39,3 @@ This creates a `dist/` folder with the finished site — this is what GitHub Act
 - `public/images/` — images, GIFs, and the 3D model (`.glb`) used by the site
 - `public/fonts/` — the custom typeface used across the site
 
-## Notes
-
-- The 3D model (`public/images/model.glb`) is tracked with [Git LFS](https://git-lfs.com/) because it's a large file. If you clone this repo, make sure Git LFS is installed (`git lfs install`) before checking out.
