@@ -1,41 +1,78 @@
 # Agentic Square
 
-An interactive web presentation for the Agentic Square studio project, featuring a walkable 3D model.
+Prompt City. Urban Vision Wolfsburg 2026 — Design studio SoSe 2026
+Bauhaus-Universität Weimar, InfAU
 
-## Live site
+**Team:** Dikshya Pokharel, Mareike Sophie Steffan, Zhasmin Roumieh
+**Contact:** zhasminroumieh@gmail.com
 
-Deployed automatically by GitHub Actions every time changes are pushed to `main`, at whatever GitHub Pages URL is configured for this repo (Settings → Pages).
+## Abstract
 
-## Tech stack
+Agentic Square responds to the erosion of everyday social life in car-oriented neighbourhoods of Wolfsburg, taking as its test site the underused Marktplatz of Westhagen. The premise is that community forms through building things together: residents come to know one another by designing and constructing public space as a group, season after season. As Artificial intelligence becomes widely available, the project experiments with placing it in the square itself as a digital assistant that coordinates this collective process. The assistant gathers residents' wishes, proposes layouts, produces print-ready plans and step by step build manuals that require no specialist skills, handles city permits, divides the work into sign-up tasks and also handles the dismantling process. The same low-cost pallets and bricks are reconfigured from season to season into a bench, a planter, a playground or a festival stand. The assistant provides the workflow, and the residents build and decide together.
 
-- [Vite](https://vitejs.dev/) — dev server & build tool
-- [React](https://react.dev/) — UI
-- [Three.js](https://threejs.org/) / react-three-fiber — 3D model viewer
+## The urban issue
 
-## Getting started (running it on your own computer)
+We are addressing social isolation both between and within Wolfsburg's districts. Public spaces are important sites of encounter and everyday social interaction, yet Wolfsburg's planned development meant that these spaces did not always evolve alongside the communities they serve, creating gaps in the city's social infrastructure. Our project therefore explores how involving communities in shaping public spaces can create places that reflect local needs, encourage interaction, and foster a sense of belonging.
 
-1. Install [Node.js](https://nodejs.org/) (v20 or newer).
-2. Install the project's dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the local dev server:
-   ```bash
-   npm run dev
-   ```
-4. Open the URL it prints in your terminal (usually `http://localhost:5173/AGENTIC-SQUARE/`).
+## How to use this site
 
-## Building for production
+The website simulates a conversation with the Marktplatz of Westhagen through a familiar, WhatsApp-like group chat interface. You first learn about the project through a short introduction connected to a real-life wooden pallet placed in the square in Westhagen. From there, you are introduced to the Westhagen Marktplatz group, where residents interact with the square as a digital assistant and collectively shape ideas for the future use of the space.
+
+You can scroll through the conversation, read messages from residents and 'agentic' square, and react or respond to some messages. The conversation is pre-simulated, so your responses do not change its direction. Instead, explore the conversation to experience how residents might use the chat to participate in collective decision-making and placemaking.
+
+As you scroll, the conversation develops through different stages of the process — from the initial idea, to planning, discussion, and conflict resolution. The conversation centers around "Westhagen Plays," a summer event that the residents collectively develop throughout the chat.
+
+Alongside the conversation, a 3D model of the square changes as the discussion progresses and is linked to the chat. This allows you to see the ideas and designs discussed in the conversation translate into changes in the physical space. You can also zoom into the isometric views shared by the square within the chat to view the proposed changes in more detail.
+
+At the end of the experience, you can explore selected furniture pieces through Augmented Reality (AR). This feature was designed as part of an exhibition, allowing visitors to experience how elements discussed in the conversation could be placed in the physical environment. For the best experience, we recommend using the website on a tablet.
+
+## What is frozen
+
+The Augmented Reality experience was originally intended to be available for both the furniture pieces and every stage of the square as the chat progresses. Due to lagging issues loading the AR models, it was limited to the furniture pieces and the first stage of the chat only. All other interactions work as they would in the exhibition.
+
+## Contents
+
+- `presentation/` — final presentation
+- `materials/` — posters, boards, brochures, plans (web-resolution PDFs, matching what the site itself uses)
+- `source/` — original design files: isometric renders, the SketchUp playground model, and a link to the Canva design file
+- `raw/` — full-resolution originals of images/video kept outside the built site (the pre-compression 3D model, brochure scans, comparison images)
+- `exhibition/` — photographs from the exhibition
+- `src/`, `public/`, `index.html` — the site's source code
+- `dist/` — the built, ready-to-publish site (generated by the build step below, not stored in git)
+
+## How to run it
+
+Static — no server or database required, just files served over HTTP.
+
+To rebuild the site from source:
 
 ```bash
+npm install
 npm run build
 ```
 
-This creates a `dist/` folder with the finished site — this is what GitHub Actions builds and publishes automatically, so you normally don't need to run it yourself.
+The finished site lands in `dist/` — serve that folder as-is to publish it. For local development instead of a full rebuild: `npm run dev`.
 
-## Project structure
+## Credits
 
-- `src/` — React components and app logic
-- `public/images/` — images, GIFs, and the 3D model (`.glb`) used by the site
-- `public/fonts/` — the custom typeface used across the site
+- [BB Torsos Pro](https://ifonts.xyz/bb-torsos-pro-font-family.html) — typeface used across the site (demo license, personal use)
+- [Inter](https://fontsource.org/fonts/inter) — typeface used in the chat interface, via Fontsource
+- [Tabler Icons](https://tabler.io/icons) — icon set used in the chat interface
+- [React](https://react.dev/) / [Vite](https://vitejs.dev/) — application framework and build tool
+- [Three.js](https://threejs.org/) — 3D rendering
+- [`@google/model-viewer`](https://modelviewer.dev/) — 3D/AR model viewer used in the chat interface
+- [`pdf.js`](https://mozilla.github.io/pdf.js/) — in-browser PDF viewer
+- [`qrcode`](https://github.com/soldair/node-qrcode) — QR code generation
 
+All photographs are our own.
+
+- Human figures, plant PNGs, etc. — created using ChatGPT, or retrieved from [pimpmydrawing.com/people](https://pimpmydrawing.com/people)
+- Satellite imagery — screenshots taken in Google Earth, then edited in Photoshop
+- Hands holding brochures, tablets, etc. — created using ChatGPT or Gemini
+- Images in the "How to" manual — created in Rhino, with light ChatGPT assistance where needed (e.g. cover pages)
+
+## Permissions
+
+We agree that InfAU may republish this work under a university account or domain —
+including on GitHub Pages — host and mirror these files, and show the work in teaching,
+exhibitions and documentation, with credit to the team.
